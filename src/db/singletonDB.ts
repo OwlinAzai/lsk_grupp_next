@@ -18,5 +18,10 @@ export const db = {
         roles: usersTables.roles,
         users: usersTables.users,
         passwordResetTokens: usersTables.passwordResetTokens,
+        uom: productsTables.unitOfMeasures,
+        productTypes: productsTables.productTypes,
+        products: productsTables.products,
+        priceHistory: productsTables.priceHistory,
+        
     }    
 };
