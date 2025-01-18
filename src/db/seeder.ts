@@ -1,10 +1,10 @@
-import { drizzle, MySql2Client } from "drizzle-orm/mysql2";
-import mysql from 'mysql2';
+import { drizzle } from "drizzle-orm/mysql2";
+import { createConnection } from 'mysql2';
 import { roles } from "./schema/users";
 import '../../envConfig';
 
 async function main() {
-    const connection = mysql.createConnection({
+    const connection = createConnection({
         host: process.env.DB_HOST!,
         port: Number(process.env.DB_PORT!),
         user: process.env.DB_USERNAME!,
