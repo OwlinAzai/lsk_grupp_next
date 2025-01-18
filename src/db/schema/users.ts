@@ -14,7 +14,7 @@ export const users = mysqlTable('users', {
     email: t.varchar('email', {length: 256}).unique().notNull(),
     emailVerifiedAt: t.timestamp('email_verified_at'),
     password: t.varchar('password', {length: 256}).notNull(),
-    role: t.smallint('role_id').references(() => roles.id, {onDelete: 'set default'}).default(2),
+    role: t.smallint('role_id').references(() => roles.id, {onDelete: 'set null'}),
     // $table->rememberToken();
     // $table->timestamps();
     ...timestamps

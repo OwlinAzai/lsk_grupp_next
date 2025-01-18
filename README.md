@@ -13,7 +13,13 @@ pnpm dev
 # or
 bun dev
 ```
-Install docker, then docker-compose up -d in root of project.
+Install docker, then 
+```bash
+docker-compose up -d
+npx drizzle-kit generate
+npx drizzle-kit migrate
+npx tsx ./src/db/seeder.ts
+```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 

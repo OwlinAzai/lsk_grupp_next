@@ -82,7 +82,7 @@ CREATE TABLE `users` (
 	`email` varchar(256) NOT NULL,
 	`email_verified_at` timestamp,
 	`password` varchar(256) NOT NULL,
-	`role_id` smallint DEFAULT 2,
+	`role_id` smallint,
 	`created_at` timestamp NOT NULL,
 	`edited_at` timestamp,
 	CONSTRAINT `users_id` PRIMARY KEY(`id`),
@@ -97,4 +97,4 @@ ALTER TABLE `products` ADD CONSTRAINT `products_uom_id_unit_of_measures_id_fk` F
 ALTER TABLE `products` ADD CONSTRAINT `products_product_type_id_product_types_id_fk` FOREIGN KEY (`product_type_id`) REFERENCES `product_types`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE `reviews` ADD CONSTRAINT `reviews_user_id_users_id_fk` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE `reviews` ADD CONSTRAINT `reviews_product_id_products_id_fk` FOREIGN KEY (`product_id`) REFERENCES `products`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE `users` ADD CONSTRAINT `users_role_id_roles_id_fk` FOREIGN KEY (`role_id`) REFERENCES `roles`(`id`) ON DELETE set default ON UPDATE no action;
+ALTER TABLE `users` ADD CONSTRAINT `users_role_id_roles_id_fk` FOREIGN KEY (`role_id`) REFERENCES `roles`(`id`) ON DELETE set null ON UPDATE no action;

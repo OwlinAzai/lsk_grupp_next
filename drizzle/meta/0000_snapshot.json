@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "e1926078-fdb7-4fce-b080-d3c46a190be1",
+  "id": "3575d898-3023-4858-8f60-b6e75935c250",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "callback_requests": {
@@ -614,8 +614,7 @@
           "type": "smallint",
           "primaryKey": false,
           "notNull": false,
-          "autoincrement": false,
-          "default": 2
+          "autoincrement": false
         },
         "created_at": {
           "name": "created_at",
@@ -644,7 +643,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "set default",
+          "onDelete": "set null",
           "onUpdate": "no action"
         }
       },
