@@ -13,6 +13,7 @@ pnpm dev
 # or
 bun dev
 ```
+Install docker, then docker-compose up -d in root of project.
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
