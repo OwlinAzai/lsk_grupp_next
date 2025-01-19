@@ -7,6 +7,7 @@ export default function SearchBar() {
             className="flex px-4 py-3 rounded-full border-2 bg-gray border-blue-500 overflow-hidden max-w-md mx-auto font-[sans-serif]">
             <input type="email" placeholder="Search Something..."
                    className="w-full outline-none bg-transparent text-black text-sm"/>
+            <Image src="/search.png" className="" width={16} height={16} alt=""/>
         </div>
     );
 };
