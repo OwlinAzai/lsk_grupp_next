@@ -19,3 +19,14 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  height: 10px;
+  gap: 10px;
+}
+
+.breadcrumbs li {
+  list-style: none;
+}

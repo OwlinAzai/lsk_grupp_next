@@ -1,12 +1,7 @@
-import Image from "next/image";
-import { db } from "@/db/singletonDB";
-import Layout from './layout';
-import Header from "@/app/components/header";
-
 export default function Home() {
-  return (<Layout>
-    <div>
-      <Header />
+  return (
+    <div className="pt-[22px] ml-[14rem] mr-[14rem]">
+      <h1>Home</h1>
     </div>
-  </Layout>);
+  );
 }
