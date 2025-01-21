@@ -1,7 +1,7 @@
 import { drizzle } from "drizzle-orm/mysql2";
 import * as usersTables from './schema/users';
 import * as productsTables from './schema/products';
-import "../../envConfig";
+// import "../../envConfig";
 import { createConnection } from 'mysql2';
 
 const connection = createConnection({
@@ -22,6 +22,6 @@ export const db = {
         productTypes: productsTables.productTypes,
         products: productsTables.products,
         priceHistory: productsTables.priceHistory,
-        
+        callbackRequests: productsTables.callbackRequests
     }    
 };
