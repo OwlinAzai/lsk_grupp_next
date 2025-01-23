@@ -28,6 +28,13 @@ export const unitOfMeasures = mysqlTable('unit_of_measures', {
     ...timestamps
 });
 
+export const manufacturers = mysqlTable('manufacturers', {
+    id: t.smallint().primaryKey().autoincrement(),
+    fullName: t.varchar('full_name', {length: 256}).notNull(),
+    shortName: t.varchar('short_name', {length: 256}),
+    ...timestamps
+});
+
 //productName - название продукта
 //amount - количество продаваемое в одной единице товара, например мешок 25 кг, amount - 25
 //uomID - внешний ключ единицы измерения
@@ -38,6 +45,7 @@ export const products = mysqlTable('products', {
     productName: t.varchar('product_name', {length: 256}).notNull(),
     amount: t.real().notNull(),
     uomID: t.smallint('uom_id').references(() => unitOfMeasures.id, {onDelete: 'set null'}),
+    manufacturerID: t.smallint('manufacturer_id').references(() => manufacturers.id, {onDelete: 'set null'}),
     productTypeId: t.tinyint('product_type_id').references(() => productTypes.id, {onDelete: 'cascade'}).notNull(),
     otherAttributes: t.json('other_attributes'),
     mainItem: t.boolean('main_item'),
