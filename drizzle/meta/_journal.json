@@ -5,8 +5,15 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1737188009553,
-      "tag": "0000_famous_tarantula",
+      "when": 1737654495635,
+      "tag": "0000_bored_eternity",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1737656005515,
+      "tag": "0001_plain_shocker",
       "breakpoints": true
     }
   ]

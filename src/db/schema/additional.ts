@@ -13,7 +13,7 @@ export const companyInfo = mysqlTable('company_info', {
 
 export const contacts = mysqlTable('contacts', {
     id: t.smallint().primaryKey().autoincrement(),
-    type: t.mysqlEnum(["phone", "adress", "email"]).notNull(),
+    type: t.mysqlEnum(["phone", "adress", "email", "contact_person"]).notNull(),
     signature: t.varchar("signature", {length: 128}),
     value: t.varchar("value", {length: 128})
 });
