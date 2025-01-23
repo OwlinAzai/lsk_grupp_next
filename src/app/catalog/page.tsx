@@ -1,4 +1,12 @@
-export default function About() {
+"use client";
+
+import NextLink from "next/link";
+import { Button, Link } from "@mui/material";
+import { useParams } from "next/navigation";
+
+export default function Catalog() {
+  const { productId } = useParams();
+
   return (
     <div className="pt-[22px] pb-[22px] ml-[14rem] mr-[14rem] shadow-xl rounded-lg px-4 bg-white">
       <h1>Catalog</h1>
@@ -10,6 +18,14 @@ export default function About() {
         massa euismod, consequat arcu vel, pulvinar justo. Donec in velit vitae
         est consectetur lobortis.
       </p>
+      <Link href={`catalog/product/${productId}`} component={NextLink}>
+        <Button
+          type="submit"
+          className="bg-orange-500 hover:bg-orange-400 text-white font-bold py-2 px-4 border-b-4 border-orange-700 hover:border-orange-500 rounded"
+        >
+          Tovar
+        </Button>
+      </Link>
     </div>
   );
 }
