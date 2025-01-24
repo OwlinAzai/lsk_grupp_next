@@ -24,7 +24,7 @@ const Header = () => {
           alt="Logo"
           width={123}
           height={60}
-          className={"pb-10 pt-10 mr-[6rem]"}
+          className={"pb-10 pt-10 mr-[6rem] hover:cursor-pointer"}
           priority={true}
         />
       </Link>
@@ -70,7 +70,7 @@ const Header = () => {
         <Link component={NextLink} href="/request-form" passHref>
           <Button
             type="button"
-            className="ml-[2.5rem] text-white decoration-transparent bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-sans rounded-lg text-base upper-case px-5 py-5 text-center me-2 mb-2 text-nowrap"
+            className="ml-[2.5rem] text-white decoration-transparent bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl hover:ring-4 hover:ring-opacity-45 hover:ring-orange-600 focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-sans rounded-lg text-base upper-case px-5 py-5 text-center me-2 mb-2 text-nowrap"
             onClick={() => console.log("Заявка")}
           >
             Оставить заявку
