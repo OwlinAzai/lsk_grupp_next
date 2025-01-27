@@ -1,14 +1,13 @@
 "use client";
 
 import NextLink from "next/link";
-import { Button, Link } from "@mui/material";
-import { useParams } from "next/navigation";
+import { Link } from "@mui/material";
+import { data } from "./../utils/data";
+import Image from "next/image";
 
 export default function Catalog() {
-  const { productId } = useParams();
-
   return (
-    <div className="pt-[22px] pb-[22px] ml-[14rem] mr-[14rem] shadow-xl rounded-lg px-4 bg-white">
+    <div className="pt-[22px] pb-[22px] ml-[14rem] mr-[14rem] shadow-xl rounded-lg px-4 bg-white key={product.id}">
       <h1>Catalog</h1>
       <p>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel libero
@@ -18,14 +17,39 @@ export default function Catalog() {
         massa euismod, consequat arcu vel, pulvinar justo. Donec in velit vitae
         est consectetur lobortis.
       </p>
-      <Link href={`catalog/product/${productId}`} component={NextLink}>
-        <Button
-          type="submit"
-          className="bg-orange-500 hover:bg-orange-400 text-white font-bold py-2 px-4 border-b-4 border-orange-700 hover:border-orange-500 rounded"
+
+      {data.products.map((product) => (
+        <Link
+          href={`catalog/${product.id}`}
+          component={NextLink}
+          key={product.id}
+          underline="none"
         >
-          Tovar
-        </Button>
-      </Link>
+          <div
+            className="mt-[20px] mb-[20px] drop-shadow-2xl rounded-lg px-4 py-4 bg-white hover:bg-[#E7E9E4]"
+            key={product.id}
+          >
+            <h1>{product.name}</h1>
+            <p>{product.description}</p>
+            <Image
+              src={product.image}
+              alt={product.name}
+              width={100}
+              height={100}
+            ></Image>
+            <Link
+              href={`catalog/${product.id}`}
+              component={NextLink}
+              key={product.id}
+              underline="none"
+              className="bg-orange-500 hover:bg-orange-400 text-white font-bold py-2 px-4 hover:border-orange-500 rounded"
+            >
+              {product.price}
+            </Link>
+            <br />
+          </div>
+        </Link>
+      ))}
     </div>
   );
 }
