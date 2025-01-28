@@ -8,6 +8,7 @@ import Image from "next/image";
 export type FormData = {
   name: string;
   email: string;
+  phoneNumber: string;
   message: string;
   cart: string;
 };
@@ -148,6 +149,21 @@ const Contact: FC = () => {
           placeholder="example@domain.com"
           className="w-full rounded-md border border-gray-300 bg-white py-3 px-4 text-base font-medium text-gray-700 outline-none focus:ring-2 focus:ring-orange-500"
           {...register("email", { required: true })}
+        />
+      </div>
+
+      <div className="mb-5 pl-2 pr-2">
+        <label
+          htmlFor="phoneNumber"
+          className="mb-3 block text-base font-medium text-gray-700"
+        >
+          Phone Number
+        </label>
+        <input
+          type="phoneNumber"
+          placeholder="+375 (29) 123-45-67"
+          className="w-full rounded-md border border-gray-300 bg-white py-3 px-4 text-base font-medium text-gray-700 outline-none focus:ring-2 focus:ring-orange-500"
+          {...register("phoneNumber", { required: true })}
         />
       </div>
 

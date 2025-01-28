@@ -3,7 +3,10 @@ import nodemailer from "nodemailer";
 import Mail from "nodemailer/lib/mailer";
 
 export async function POST(request: NextRequest) {
-  const { email, name, message, cart } = await request.json();
+  const { email, name, phoneNumber, message, cart } = await request.json();
+
+  // Логирование для проверки данных
+  console.log({ email, name, phoneNumber, message, cart });
 
   // Преобразуем строку cart в массив, если это строка
   let cartItemsArray;
@@ -41,7 +44,7 @@ export async function POST(request: NextRequest) {
   // Форматируем cart как таблицу для HTML письма
   const cartItems = cartItemsArray
     .map((item: { name: string; quantity: number; price: number }) => {
-      return `
+      return ` 
         <tr>
           <td style="padding: 10px; border: 1px solid #ddd; text-align: left;">${item.name}</td>
           <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">${item.quantity}</td>
@@ -49,7 +52,7 @@ export async function POST(request: NextRequest) {
         </tr>
       `;
     })
-    .join("");
+    .join(" ");
 
   // HTML шаблон письма
   const htmlTemplate = `
@@ -112,6 +115,7 @@ export async function POST(request: NextRequest) {
           <h1>New Request</h1>
           <p><strong>Name:</strong> ${name}</p>
           <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Phone Number:</strong> ${phoneNumber}</p>
           <p><strong>Message:</strong></p>
           <p>${message}</p>
 
