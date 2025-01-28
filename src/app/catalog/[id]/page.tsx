@@ -27,8 +27,18 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
       // Получаем текущую корзину из localStorage
       const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
 
-      // Добавляем новый продукт в корзину
-      existingCart.push(product);
+      // Проверяем, есть ли уже такой продукт в корзине
+      const existingProductIndex = existingCart.findIndex(
+        (item) => item.id === product.id
+      );
+
+      if (existingProductIndex !== -1) {
+        // Если товар уже есть, увеличиваем его количество на 1
+        existingCart[existingProductIndex].quantity += 1;
+      } else {
+        // Если товара нет, добавляем его с quantity = 1
+        existingCart.push({ ...product, quantity: 1 });
+      }
 
       // Сохраняем обновленную корзину в localStorage
       localStorage.setItem("cart", JSON.stringify(existingCart));

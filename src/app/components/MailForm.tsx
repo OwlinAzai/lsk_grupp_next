@@ -39,6 +39,30 @@ const Contact: FC = () => {
     }
   }, []);
 
+  const addToCart = (product: any) => {
+    // When adding a new product, set quantity to 1
+    const updatedCart = [...cart];
+
+    // Check if the product already exists in the cart
+    const existingProductIndex = updatedCart.findIndex(
+      (item) => item.id === product.id
+    );
+
+    if (existingProductIndex !== -1) {
+      // If the product exists in the cart, reset its quantity to 1
+      updatedCart[existingProductIndex].quantity = 1;
+    } else {
+      // If the product is new, add it with quantity = 1
+      updatedCart.push({ ...product, quantity: 1 });
+    }
+
+    setCart(updatedCart); // Update state
+    localStorage.setItem("cart", JSON.stringify(updatedCart)); // Update localStorage
+
+    // Update the cart value in the form state
+    setValue("cart", JSON.stringify(updatedCart));
+  };
+
   const updateQuantity = (index: number, change: number) => {
     const updatedCart = [...cart];
     const item = updatedCart[index];
@@ -93,7 +117,7 @@ const Contact: FC = () => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className=" mx-auto p-6 bg-white rounded-lg shadow-lg ml-[14rem] mr-[14rem]"
+      className="mx-auto p-6 bg-white rounded-lg shadow-lg ml-[14rem] mr-[14rem]"
     >
       <h1 className="text-2xl font-bold text-center mb-6">Contact Us</h1>
 
