@@ -37,7 +37,7 @@ export default function Home() {
   // });
 
   return (
-    <div className="pt-[22px] pb-[22px] ml-[14rem] mr-[14rem] shadow-xl rounded-lg px-4 bg-white">
+    <div className="">
       <MailForm />
       {/* <Form action="">
         <input
