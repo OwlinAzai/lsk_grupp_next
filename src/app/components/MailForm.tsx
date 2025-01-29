@@ -118,14 +118,14 @@ const Contact: FC = () => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="mx-auto p-6 bg-white rounded-lg shadow-lg ml-[14rem] mr-[14rem]"
+      className="mx-auto mb-4 p-6 bg-white rounded-lg shadow-lg ml-[14rem] mr-[14rem]"
     >
-      <h1 className="text-2xl font-bold text-center mb-6">Contact Us</h1>
+      <h1 className="text-2xl font-bold text-center mb-4">Contact Us</h1>
 
       <div className="mb-5 pl-2 pr-2">
         <label
           htmlFor="name"
-          className="mb-3 block text-base font-medium text-gray-700"
+          className="mb-2 block text-base font-medium text-gray-700"
         >
           Full Name
         </label>
@@ -140,7 +140,7 @@ const Contact: FC = () => {
       <div className="mb-5 pl-2 pr-2">
         <label
           htmlFor="email"
-          className="mb-3 block text-base font-medium text-gray-700"
+          className="mb-2 block text-base font-medium text-gray-700"
         >
           Email Address
         </label>
@@ -155,7 +155,7 @@ const Contact: FC = () => {
       <div className="mb-5 pl-2 pr-2">
         <label
           htmlFor="phoneNumber"
-          className="mb-3 block text-base font-medium text-gray-700"
+          className="mb-2 block text-base font-medium text-gray-700"
         >
           Phone Number
         </label>
@@ -170,7 +170,7 @@ const Contact: FC = () => {
       <div className="mb-5 pl-2 pr-2">
         <label
           htmlFor="message"
-          className="mb-3 block text-base font-medium text-gray-700"
+          className="mb-2 block text-base font-medium text-gray-700"
         >
           Message
         </label>

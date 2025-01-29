@@ -11,7 +11,7 @@ export const data = {
         },
         {
             id: 1,
-            name: 'Шпатлевка ACRYL-PUTZ ST10. Старт-финиш. 20 кг. Польша.',
+            name: 'Апатлевка ACRYL-PUTZ ST10. Старт-финиш. 20 кг. Польша.',
             description: 'Описание продукта 2',
             price: 200,
             image: "/images/1.png",
@@ -32,7 +32,7 @@ export const data = {
         },
         {
             id: 4,
-            name: 'Шпатлевка ACRYL-PUTZ ST10. Старт-финиш. 20 кг. Польша.',
+            name: 'Бпатлевка ACRYL-PUTZ ST10. Старт-финиш. 20 кг. Польша.',
             description: 'Описание продукта 5',
             price: 500,
             image: "/images/1.png",
