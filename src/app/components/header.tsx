@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Image from "next/image";
+import NextLink from "next/link";
 import { Button, Link } from "@mui/material";
 
 const Header = () => {
@@ -10,19 +11,20 @@ const Header = () => {
   return (
     <div
       className={
-        "bg-brown text-white flex align-middle justify-center pl-222 h-220 font-sans"
+        "bg-brown text-white flex align-middle justify-center pl-[0rem] font-sans"
       }
     >
       <Link
-        href="/"
         className="text-white decoration-transparent hover:decoration-orange-500 decoration-2 cursor-pointer text-nowrap text-2xl"
+        component={NextLink}
+        href="/"
       >
         <Image
           src="/Logo.png"
           alt="Logo"
           width={123}
           height={60}
-          className={"pb-7 pt-7 mr-20"}
+          className={"pb-10 pt-10 mr-[6rem] hover:cursor-pointer"}
           priority={true}
         />
       </Link>
@@ -46,28 +48,34 @@ const Header = () => {
           />
         </div>
         <Link
+          component={NextLink}
+          href="/about"
           className={
-            "ml-10 text-white decoration-transparent hover:decoration-orange-500 decoration-2 underline-offset-4 cursor-pointer text-nowrap text-2xl"
+            "ml-20 text-white decoration-transparent hover:decoration-orange-500 decoration-2 underline-offset-8 cursor-pointer text-nowrap text-2xl"
           }
           onClick={() => console.log("О нас")}
         >
           О нас
         </Link>
         <Link
+          component={NextLink}
+          href="/catalog"
           className={
-            "ml-10 text-white decoration-transparent hover:decoration-orange-500 decoration-2 underline-offset-4 cursor-pointer text-nowrap text-2xl"
+            "ml-[2.5rem] text-white decoration-transparent hover:decoration-orange-500 decoration-2 underline-offset-8 cursor-pointer text-nowrap text-2xl"
           }
           onClick={() => console.log("Каталог")}
         >
           Каталог
         </Link>
-        <Button
-          type="button"
-          className="ml-10 text-white decoration-transparent bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl  focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-sans rounded-lg text-base upper-case px-16 py-5 text-center me-2 mb-2 text-nowrap"
-          onClick={() => console.log("Заявка")}
-        >
-          Оставить заявку
-        </Button>
+        <Link component={NextLink} href="/request-form" passHref>
+          <Button
+            type="button"
+            className="ml-[2.5rem] text-white decoration-transparent bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl hover:ring-4 hover:ring-opacity-45 hover:ring-orange-600 focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-sans rounded-lg text-base upper-case px-5 py-5 text-center me-2 mb-2 text-nowrap"
+            onClick={() => console.log("Заявка")}
+          >
+            Оставить заявку
+          </Button>
+        </Link>
       </div>
     </div>
   );

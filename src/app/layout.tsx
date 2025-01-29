@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Oswald } from "next/font/google";
 import "./globals.css";
+import Header from "./components/header";
+import Breadcrumbs from "./components/breadcrumbs";
 
 const oswald = Oswald({
   variable: "--font-oswald",
@@ -36,8 +38,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${oswald.variable} ${oswaldWght.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${oswald.variable} ${oswaldWght.variable} antialiased bg-[#e4e4e4]`}
       >
+        <Header />
+        <Breadcrumbs />
         {children}
       </body>
     </html>
