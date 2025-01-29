@@ -9,9 +9,7 @@
   Список прокинутых товаров из localStorage (id, название, цена, количество)
 */
 
-import React, { useState } from "react";
-import { Button } from "@mui/material";
-import Form from "next/form";
+import React from "react";
 import MailForm from "@/app/components/MailForm";
 
 export default function Home() {
