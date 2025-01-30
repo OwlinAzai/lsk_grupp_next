@@ -7,10 +7,21 @@ import Image from "next/image";
 
 export default function Catalog() {
   const [sortedData, setSortedData] = useState(data.products);
-  const [sortCriteria, setSortCriteria] = useState<"name" | "price">("name");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [sortCriteria, setSortCriteria] = useState<"name" | "price">(() => {
+    if (typeof window !== "undefined") {
+      return (
+        (localStorage.getItem("sortCriteria") as "name" | "price") || "name"
+      );
+    }
+    return "name";
+  });
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">(() => {
+    if (typeof window !== "undefined") {
+      return (localStorage.getItem("sortOrder") as "asc" | "desc") || "asc";
+    }
+    return "asc";
+  });
 
-  // Set the initial sorting order when the component mounts
   useEffect(() => {
     const sortProducts = () => {
       if (sortCriteria === "name") {
@@ -28,10 +39,13 @@ export default function Catalog() {
       }
     };
 
-    sortProducts(); // Call the sorting function when either `sortCriteria` or `sortOrder` changes
+    sortProducts();
+
+    // Save sorting preferences to localStorage
+    localStorage.setItem("sortCriteria", sortCriteria);
+    localStorage.setItem("sortOrder", sortOrder);
   }, [sortCriteria, sortOrder]);
 
-  // Handle changes in the sorting criteria or order
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
     const [newSortCriteria, newSortOrder] = value.split("-") as [

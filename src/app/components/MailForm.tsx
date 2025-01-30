@@ -22,9 +22,10 @@ const Contact: FC = () => {
     formState: { isSubmitting }, // Для отслеживания состояния отправки формы
   } = useForm<FormData>();
 
-  const [cart, setCart] = useState<any[]>([]); // Состояние для хранения корзины
+  const [cart, setCart] = useState<[]>([]); // Состояние для хранения корзины
   const [isFormSubmitting, setIsFormSubmitting] = useState(false); // Состояние для отслеживания отправки формы
   const [isModalOpen, setIsModalOpen] = useState(false); // Состояние для управления модальным окном
+  const [errorMessage, setErrorMessage] = useState<string | null>(null); // Состояние для хранения сообщения об ошибке
 
   useEffect(() => {
     // Загружаем корзину из localStorage при монтировании компонента
@@ -50,7 +51,7 @@ const Contact: FC = () => {
     const updatedCart = [...cart];
     // Проверяем, есть ли товар в корзине
     const existingProductIndex = updatedCart.findIndex(
-      (item) => item.id === product.id 
+      (item) => item.id === product.id
     );
 
     if (existingProductIndex !== -1) {
@@ -95,7 +96,7 @@ const Contact: FC = () => {
       await sendEmail(data); // Отправляем данные формы на сервер
       setIsModalOpen(true); // Показываем модальное окно после успешной отправки
     } catch (error) {
-      alert("Error submitting the form"); // В случае ошибки выводим сообщение об ошибке
+      setErrorMessage("Error submitting the form. Please try again later.");
     } finally {
       setIsFormSubmitting(false); // Завершаем процесс отправки
     }
@@ -110,6 +111,7 @@ const Contact: FC = () => {
   // Функция для закрытия модального окна
   const closeModal = () => {
     setIsModalOpen(false); // Закрываем модальное окно
+    setErrorMessage(null); // Сбрасываем ошибку при закрытии модального окна
   };
 
   return (
@@ -254,7 +256,7 @@ const Contact: FC = () => {
           disabled={isSubmitting}
           data-testid="submit-button"
         >
-          {isSubmitting ? "Submitting..." : "Submit"}{" "}
+          {isSubmitting ? "Submitting..." : "Submit"}
           {/* Изменяем текст кнопки в зависимости от состояния отправки */}
         </button>
       </div>
@@ -271,6 +273,25 @@ const Contact: FC = () => {
               <button
                 className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600"
                 onClick={closeModal} // Закрываем модальное окно
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Модальное окно для ошибки отправки */}
+      {errorMessage && (
+        <div className="fixed inset-0 flex items-center justify-center bg-opacity-50 z-50 shadow-black drop-shadow-2xl">
+          <div className="bg-white rounded-lg p-6 max-w-sm mx-auto shadow-black drop-shadow-2xl">
+            <h2 className="text-2xl font-semibold text-center text-red-500">
+              Error!
+            </h2>
+            <p className="mt-2 text-center text-gray-600">{errorMessage}</p>
+            <div className="mt-4 text-center">
+              <button
+                className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+                onClick={closeModal}
               >
                 Close
               </button>
