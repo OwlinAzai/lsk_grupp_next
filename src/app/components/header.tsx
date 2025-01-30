@@ -1,19 +1,41 @@
+// header.tsx
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import NextLink from "next/link";
 import { Button, Link } from "@mui/material";
+import { useSearch } from "../context/searchContext"; // Импортируем контекст
+import { data } from "../utils/data"; // Импорт данных о товарах
 
 const Header = () => {
-  useState(() => {
-    console.log("Header mounted");
-  });
+  const { headerSearchQuery, setHeaderSearchQuery } = useSearch();
+  const [filteredProducts, setFilteredProducts] = useState(data.products);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setHeaderSearchQuery(e.target.value); // Обновляем состояние поиска
+  };
+
+  // Фильтрация продуктов для выпадающего списка
+  useEffect(() => {
+    if (headerSearchQuery) {
+      setFilteredProducts(
+        data.products.filter(
+          (product) =>
+            product.name
+              .toLowerCase()
+              .includes(headerSearchQuery.toLowerCase()) ||
+            product.description
+              .toLowerCase()
+              .includes(headerSearchQuery.toLowerCase())
+        )
+      );
+    } else {
+      setFilteredProducts([]);
+    }
+  }, [headerSearchQuery]);
+
   return (
-    <div
-      className={
-        "bg-brown text-white flex align-middle justify-center pl-[0rem] font-sans"
-      }
-    >
+    <div className="bg-brown text-white flex align-middle justify-center pl-[0rem] font-sans">
       <Link
         className="text-white decoration-transparent hover:decoration-orange-500 decoration-2 cursor-pointer text-nowrap text-2xl"
         component={NextLink}
@@ -28,8 +50,9 @@ const Header = () => {
           priority={true}
         />
       </Link>
+
       <div className="flex items-center place-items-center align-middle text-black">
-        <div className="flex w-full px-4 py-3 rounded-full border-2 bg-white border-transparent max-w-2xl mx-auto font-[sans-serif]">
+        <div className="flex w-[500px] px-4 py-3 rounded-full border-2 bg-white border-transparent max-w-2xl mx-auto font-[sans-serif]">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 192.904 192.904"
@@ -44,9 +67,23 @@ const Header = () => {
             id="search"
             placeholder="Поиск в Каталоге. Например, “шпатлевка”"
             className="w-full outline-none bg-transparent text-gray-600 text-sm"
-            onChange={(e) => console.log(e.target.value)}
+            value={headerSearchQuery} // Используем searchQuery из контекста
+            onChange={handleSearchChange} // Обновляем headerSearchQuery
           />
         </div>
+
+        {/* Выпадающий список с результатами поиска */}
+        {headerSearchQuery && filteredProducts.length > 0 && (
+          <div className="absolute bg-white shadow-lg mt-[150px] w-[500px] max-h-64">
+            {filteredProducts.map((product) => (
+              <NextLink key={product.id} href={`/catalog/${product.id}`}>
+                <div className="p-0 hover:bg-gray-200 cursor-pointer">
+                  <p>{product.name}</p>
+                </div>
+              </NextLink>
+            ))}
+          </div>
+        )}
         <Link
           component={NextLink}
           href="/about"

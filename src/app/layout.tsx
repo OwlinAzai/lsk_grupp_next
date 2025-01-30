@@ -4,6 +4,7 @@ import { Oswald } from "next/font/google";
 import "./globals.css";
 import Header from "./components/header";
 import Breadcrumbs from "./components/breadcrumbs";
+import { SearchProvider } from "../app/context/searchContext";
 
 const oswald = Oswald({
   variable: "--font-oswald",
@@ -40,9 +41,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${oswald.variable} ${oswaldWght.variable} antialiased bg-[#e4e4e4]`}
       >
-        <Header />
-        <Breadcrumbs />
-        {children}
+        <SearchProvider>
+          <Header />
+          <Breadcrumbs />
+          {children}
+        </SearchProvider>
       </body>
     </html>
   );
