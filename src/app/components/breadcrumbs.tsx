@@ -13,7 +13,7 @@ export default function Breadcrumbs() {
 
   return (
     <>
-      <div className="breadcrumbs-container ml-[14rem] inline-block mt-4 pb-4">
+      <div className="breadcrumbs-container ml-[14rem] inline-block mt-4 pb-4 relative">
         <div className="breadcrumbs-wrapper h-12 shadow-xl justify-center items-center flex rounded-lg px-4 bg-white">
           <ul className="breadcrumbs text-lg font-bold">
             <Link className="hover:fill-orange-400" href={"/"}>
