@@ -37,5 +37,19 @@ export const data = {
             price: 500,
             image: "/images/1.png",
         },
+        {
+            id: 5,
+            name: 'Бпатлевка ACRYL-PUTZ ST10. Старт-финиш. 20 кг. Польша.',
+            description: 'Описание продукта 6',
+            price: 600,
+            image: "/images/1.png",
+        },
+        {
+            id: 6,
+            name: 'Бпатлевка ACRYL-PUTZ ST10. Старт-финиш. 20 кг. Польша.',
+            description: 'Описание продукта 7',
+            price: 700,
+            image: "/images/1.png",
+        },
     ],
 };
