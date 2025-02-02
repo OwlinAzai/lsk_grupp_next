@@ -47,9 +47,18 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
 
   return (
     <div className="pt-[22px] pb-[22px] ml-[14rem] mr-[14rem] shadow-lg rounded-lg px-4 bg-white">
-      <h1>{product.name}</h1>
+      <title>{product.name}</title>
+      <h1>
+        <b>{product.name}</b>
+      </h1>
       <p>{product.description}</p>
-      <p>Цена: {product.price}</p>
+      <p>
+        <b>Цена:</b> {product?.price || "Уточняйте"}
+      </p>
+      <p>
+        <b>Количество:</b>{" "}
+        {product.quantity > 0 ? product.quantity : "Уточняйте"}
+      </p>
       <Image src={product.image} alt={product.name} width={300} height={300} />
       <Button
         className="bg-orange-500 hover:bg-orange-400 text-white font-bold py-2 px-4 hover:border-orange-500 rounded mt-2"

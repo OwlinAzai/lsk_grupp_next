@@ -10,6 +10,9 @@ export default {
     extend: {
       fontFamily: {
         sans: ["var(--font-oswald)"],
+        light: ["var(--font-oswald-wght)"],
+        regular: ["Oswald", "regular"],
+        bold: ["Oswald", "bold"],
       },
       colors: {
         background: "var(--background)",
@@ -20,6 +23,13 @@ export default {
         black: "#000000",
         white: "#FFFFFF",
         textgray: "#3E4239",
+      },
+      fontWeight: {
+        light: "300", // Добавляем light начертание
+        normal: "400",
+        medium: "500",
+        semiBold: "600",
+        bold: "700",
       },
     },
   },

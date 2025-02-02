@@ -36,6 +36,7 @@ export default function Home() {
 
   return (
     <div className="">
+      <title>Оставить заявку</title>
       <MailForm />
       {/* <Form action="">
         <input

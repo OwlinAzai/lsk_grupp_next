@@ -137,32 +137,42 @@ const Header = () => {
         </div>
 
         {/* Выпадающий список с результатами поиска */}
-        {isDropdownVisible && filteredProducts.length > 0 && (
+        {isDropdownVisible && (
           <div
             ref={dropdownRef}
-            className="absolute bg-white shadow-2xl mt-[230px] px-4 py-1 rounded-lg max-h-[160px] min-w-[300px] overflow-y-auto z-10 transition-all duration-300 ease-in-out transform"
+            className="absolute bg-white shadow-2xl mt-[230px] px-4 py-1 rounded-lg min-h-[160px] max-h-[160px] min-w-[300px] overflow-hidden z-10 transition-all duration-300 ease-in-out transform flex flex-col justify-start"
             style={{
-              width: inputWidth, // Динамически устанавливаем ширину на основе состояния
-              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)", // Добавление тени для лучшего выделения
+              width: inputWidth,
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
             }}
           >
-            {filteredProducts.map((product) => (
-              <NextLink key={product.id} href={`/catalog/${product.id}`}>
-                <div className="p-0 hover:bg-gray-200 cursor-pointer inline-flex items-center space-x-3 border-b py-2">
-                  <Image
-                    src={product.image}
-                    alt={product.name}
-                    width={60}
-                    height={60}
-                    className="object-cover h-[60px] w-[60px]"
-                  />
-                  <div className="flex flex-col justify-center">
-                    <p className="text-sm">{product.name}</p>
-                    <p className="text-xs text-gray-500">{product.price} BYN</p>
-                  </div>
-                </div>
-              </NextLink>
-            ))}
+            {filteredProducts.length > 0 ? (
+              <div className="overflow-y-auto">
+                {filteredProducts.map((product) => (
+                  <NextLink key={product.id} href={`/catalog/${product.id}`}>
+                    <div className="p-0 hover:bg-gray-200 cursor-pointer inline-flex items-center space-x-3 border-b py-2">
+                      <Image
+                        src={product.image}
+                        alt={product.name}
+                        width={60}
+                        height={60}
+                        className="object-cover h-[60px] w-[60px]"
+                      />
+                      <div className="flex flex-col justify-center">
+                        <p className="text-sm">{product.name}</p>
+                        <p className="text-xs text-gray-500">
+                          {product.price} BYN
+                        </p>
+                      </div>
+                    </div>
+                  </NextLink>
+                ))}
+              </div>
+            ) : (
+              <div className="flex items-center justify-center h-full text-gray-500">
+                Ничего не найдено
+              </div>
+            )}
           </div>
         )}
 
@@ -182,7 +192,7 @@ const Header = () => {
           Каталог
         </Link>
 
-        <Link component={NextLink} href="/request-form" passHref>
+        <Link component={NextLink} href="/request" passHref>
           <Button
             type="button"
             className="ml-[2.5rem] text-white decoration-transparent bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl hover:ring-4 hover:ring-opacity-45 hover:ring-orange-600 focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-sans rounded-lg text-base upper-case px-5 py-5 text-center me-2 mb-2 text-nowrap"

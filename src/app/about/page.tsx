@@ -4,6 +4,7 @@ export default function About() {
   return (
     <>
       <div className="flex flex-cols-2 font-sans align-middle">
+        <title>О нас</title>
         <Menu />
         <div className="pt-[1.37rem] pb-[1.37rem] mb-[1.37rem] mr-[14rem] shadow-xl rounded-lg px-[1rem] bg-white">
           <div>
