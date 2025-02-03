@@ -50,11 +50,16 @@ export async function POST(request: NextRequest) {
         price: number;
         currency: string;
       }) => {
+        // Если цена товара 0, выводим сообщение "Товара нет в наличии"
+        const itemPrice =
+          item.price === 0
+            ? "Товара нет в наличии"
+            : `${item.price.toFixed(2)} ${item.currency || ""}`;
         return ` 
         <tr>
           <td style="padding: 10px; border: 1px solid #ddd; text-align: left;">${item.name}</td>
-          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">${item.quantity}</td>
-          <td style="padding: 10px; border: 1px solid #ddd; text-align: right;">${item.price.toFixed(2)} ${item.currency || ""}</td>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: right;">${item.quantity}</td> 
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: right;">${itemPrice}</td>
         </tr>
       `;
       }

@@ -161,7 +161,9 @@ const Header = () => {
                       <div className="flex flex-col justify-center">
                         <p className="text-sm">{product.name}</p>
                         <p className="text-xs text-gray-500">
-                          {product.price} BYN
+                          {product.quantity > 0
+                            ? product.price + " " + product.currency
+                            : "Нет в наличии. Под заказ."}
                         </p>
                       </div>
                     </div>

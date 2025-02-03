@@ -56,7 +56,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
       </p>
       <p>
         <b>Количество:</b>{" "}
-        {product.quantity > 0 ? product.quantity : "Уточняйте"}
+        {product.quantity > 0 ? product.quantity : "Нет в наличии. Под заказ."}
       </p>
       <Image src={product.image} alt={product.name} width={300} height={300} />
       <Button
