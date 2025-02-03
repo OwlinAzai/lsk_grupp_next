@@ -6,10 +6,10 @@ import { useState, useEffect } from "react";
 import { data } from "./../utils/data"; // Your product data
 import Image from "next/image";
 import { Button } from "@mui/material";
-import Filters from "./filters"; // Импортируем компонент фильтров
+import Filters from "./filters"; // Import Filters component
 
 export default function Catalog() {
-  const { catalogSearchQuery, setCatalogSearchQuery } = useSearch(); // Получаем строку поиска из контекста
+  const { catalogSearchQuery, setCatalogSearchQuery } = useSearch(); // Getting search query from context
 
   const [sortedData, setSortedData] = useState(data.products);
   const [filters, setFilters] = useState({
@@ -17,6 +17,7 @@ export default function Catalog() {
     brand: "",
     minPrice: "",
     maxPrice: "",
+    availability: "all", // Include availability in the filters
   });
 
   const [sortCriteria, setSortCriteria] = useState<"name" | "price">(() => {
@@ -35,7 +36,7 @@ export default function Catalog() {
     return "asc";
   });
 
-  // Восстановление фильтров и сортировки из localStorage при монтировании
+  // Restore filters and sorting from localStorage on mount
   useEffect(() => {
     const savedFilters = JSON.parse(localStorage.getItem("filters") || "{}");
     if (savedFilters) {
@@ -43,7 +44,7 @@ export default function Catalog() {
     }
   }, []);
 
-  // Фильтрация продуктов по строке поиска
+  // Filtering products based on search query
   const filterProducts = (query: string) => {
     return data.products.filter(
       (product) =>
@@ -54,7 +55,7 @@ export default function Catalog() {
 
   const filteredData = filterProducts(catalogSearchQuery);
 
-  // Применение фильтров (категория, бренд, цена)
+  // Applying filters (category, brand, price, availability)
   const applyFilters = () => {
     let filtered = [...filteredData];
 
@@ -80,10 +81,14 @@ export default function Catalog() {
       );
     }
 
+    if (filters.availability === "available") {
+      filtered = filtered.filter((product) => product.quantity > 0); // Только доступные товары
+    }
+
     return filtered;
   };
 
-  // Сортировка продуктов по выбранным критериям
+  // Sorting products by selected criteria
   const sortProducts = (filteredProducts: typeof data.products) => {
     const sorted = [...filteredProducts];
 
@@ -102,12 +107,13 @@ export default function Catalog() {
     }
   };
 
-  // Применяем фильтры и сортировку, когда фильтры или строка поиска изменяются
+  // Apply filters and sorting when filters or search query changes
   useEffect(() => {
     const filteredAndSortedData = sortProducts(applyFilters());
     setSortedData(filteredAndSortedData);
   }, [catalogSearchQuery, sortCriteria, sortOrder, filters]);
 
+  // Handle sort change
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
     const [newSortCriteria, newSortOrder] = value.split("-") as [
@@ -118,17 +124,17 @@ export default function Catalog() {
     setSortCriteria(newSortCriteria);
     setSortOrder(newSortOrder);
 
-    // Сохраняем в localStorage
+    // Save to localStorage
     localStorage.setItem("sortCriteria", newSortCriteria);
     localStorage.setItem("sortOrder", newSortOrder);
   };
 
-  // Обработчик изменения фильтров
+  // Handle filter change
   const handleFilterChange = (newFilters) => {
     setFilters((prevFilters) => {
       const updatedFilters = { ...prevFilters, ...newFilters };
 
-      // Сохраняем в localStorage
+      // Save to localStorage
       localStorage.setItem("filters", JSON.stringify(updatedFilters));
 
       return updatedFilters;
@@ -138,12 +144,12 @@ export default function Catalog() {
   return (
     <div>
       <Filters onFilterChange={handleFilterChange} />{" "}
-      {/* Добавляем компонент фильтров */}
+      {/* Add Filters component */}
       <div className="pt-[22px] pb-[20px] mb-[20px] ml-[14rem] mr-[14rem] shadow-xl rounded-lg px-4 bg-[#f7f7f7]">
         <title>Каталог</title>
         <h1 className="text-4xl font-regular">Каталог</h1>
 
-        {/* Строка поиска */}
+        {/* Search bar */}
         <div className="mt-4 mb-4">
           <input
             type="text"
@@ -156,7 +162,7 @@ export default function Catalog() {
           />
         </div>
 
-        {/* Сортировка */}
+        {/* Sorting */}
         <div className="mb-4">
           <select
             onChange={handleSortChange}
@@ -178,7 +184,7 @@ export default function Catalog() {
           </select>
         </div>
 
-        {/* Отображение товаров */}
+        {/* Display products */}
         {sortedData.length > 0 ? (
           sortedData.map((product) => (
             <NextLink href={`catalog/${product.id}`} passHref key={product.id}>

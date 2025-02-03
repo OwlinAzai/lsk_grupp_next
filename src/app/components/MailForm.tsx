@@ -213,7 +213,9 @@ const Contact: FC = () => {
                     className="mt-2 mb-4"
                   />
                   <p className="text-sm text-gray-600">{item.description}</p>
-                  <p className="font-semibold">Price: {item.price} руб.</p>
+                  <p className="font-semibold">
+                    Price: {item?.price || "Уточняйте"} {item?.currency || ""}
+                  </p>
                   <div className="flex items-center mt-2">
                     <button
                       type="button"
@@ -248,7 +250,7 @@ const Contact: FC = () => {
       {/* Отображаем общую стоимость */}
       <div className="pl-2 pr-2">
         <p className="mb-3 block text-base font-medium text-gray-700">
-          Total: {totalPrice} руб.
+          Total: {totalPrice} BYN
         </p>
         <button
           type="submit"

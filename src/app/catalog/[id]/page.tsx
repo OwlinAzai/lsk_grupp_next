@@ -39,7 +39,6 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
         // Если товара нет, добавляем его с quantity = 1
         existingCart.push({ ...product, quantity: 1 });
       }
-
       // Сохраняем обновленную корзину в localStorage
       localStorage.setItem("cart", JSON.stringify(existingCart));
     }
@@ -53,7 +52,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
       </h1>
       <p>{product.description}</p>
       <p>
-        <b>Цена:</b> {product?.price || "Уточняйте"}
+        <b>Цена:</b> {product?.price || "Уточняйте"} {product?.currency || ""}
       </p>
       <p>
         <b>Количество:</b>{" "}

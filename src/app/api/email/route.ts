@@ -43,15 +43,22 @@ export async function POST(request: NextRequest) {
 
   // Форматируем cart как таблицу для HTML письма
   const cartItems = cartItemsArray
-    .map((item: { name: string; quantity: number; price: number }) => {
-      return ` 
+    .map(
+      (item: {
+        name: string;
+        quantity: number;
+        price: number;
+        currency: string;
+      }) => {
+        return ` 
         <tr>
           <td style="padding: 10px; border: 1px solid #ddd; text-align: left;">${item.name}</td>
           <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">${item.quantity}</td>
-          <td style="padding: 10px; border: 1px solid #ddd; text-align: right;">${item.price.toFixed(2)} руб</td>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: right;">${item.price.toFixed(2)} ${item.currency || ""}</td>
         </tr>
       `;
-    })
+      }
+    )
     .join(" ");
 
   // HTML шаблон письма
@@ -135,7 +142,7 @@ export async function POST(request: NextRequest) {
 
           <!-- Total Price -->
           <div class="total-price">
-            <p>Total: ${totalPrice.toFixed(2)} руб</p>
+            <p>Total: ${totalPrice.toFixed(2)}</p>
           </div>
 
           <div class="footer">

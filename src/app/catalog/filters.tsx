@@ -12,15 +12,17 @@ export default function Filters({ onFilterChange }) {
   const [selectedBrand, setSelectedBrand] = useState("");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
+  const [availability, setAvailability] = useState("all"); // Состояние для фильтра по наличию
 
   // Функция для восстановления состояния фильтров из localStorage
   const loadFiltersFromStorage = () => {
-    const savedFilters = JSON.parse(localStorage.getItem("filters"));
+    const savedFilters = JSON.parse(localStorage.getItem("filters") as string);
     if (savedFilters) {
       setSelectedCategory(savedFilters.category || "");
       setSelectedBrand(savedFilters.brand || "");
       setMinPrice(savedFilters.minPrice || "");
       setMaxPrice(savedFilters.maxPrice || "");
+      setAvailability(savedFilters.availability || "all"); // Восстанавливаем фильтр по наличию
     }
   };
 
@@ -43,9 +45,10 @@ export default function Filters({ onFilterChange }) {
       brand: selectedBrand,
       minPrice,
       maxPrice,
+      availability, // Добавляем фильтр по наличию
     };
     onFilterChange(filters);
-    saveFiltersToStorage(filters); // Сохраняем фильтры
+    saveFiltersToStorage(filters);
   };
 
   // Обработчик изменения бренда
@@ -57,9 +60,10 @@ export default function Filters({ onFilterChange }) {
       brand: newBrand,
       minPrice,
       maxPrice,
+      availability,
     };
     onFilterChange(filters);
-    saveFiltersToStorage(filters); // Сохраняем фильтры
+    saveFiltersToStorage(filters);
   };
 
   // Обработчик изменения минимальной цены
@@ -71,9 +75,10 @@ export default function Filters({ onFilterChange }) {
       brand: selectedBrand,
       minPrice: newMinPrice,
       maxPrice,
+      availability,
     };
     onFilterChange(filters);
-    saveFiltersToStorage(filters); // Сохраняем фильтры
+    saveFiltersToStorage(filters);
   };
 
   // Обработчик изменения максимальной цены
@@ -85,18 +90,34 @@ export default function Filters({ onFilterChange }) {
       brand: selectedBrand,
       minPrice,
       maxPrice: newMaxPrice,
+      availability,
     };
     onFilterChange(filters);
-    saveFiltersToStorage(filters); // Сохраняем фильтры
+    saveFiltersToStorage(filters);
+  };
+
+  // Обработчик изменения наличия
+  const handleAvailabilityChange = (event) => {
+    const newAvailability = event.target.value;
+    setAvailability(newAvailability);
+    const filters = {
+      category: selectedCategory,
+      brand: selectedBrand,
+      minPrice,
+      maxPrice,
+      availability: newAvailability, // Обновляем фильтр наличия
+    };
+    onFilterChange(filters);
+    saveFiltersToStorage(filters);
   };
 
   return (
     <div className="pt-[22px] pb-[20px] mb-[20px] ml-[14rem] mr-[14rem] shadow-xl rounded-lg px-4 bg-[#f7f7f7]">
-      <h2 className="text-lg font-bold mb-3">Фильтры</h2>
+      <h1 className="text-4xl font-regular mb-3">Фильтры</h1>
 
       {/* Фильтр по категории */}
       <div className="mb-4">
-        <label className="block text-sm font-medium">Категория</label>
+        <label className="block font-regular text-xl mb-2">Категория</label>
         <select
           className="w-full p-2 border rounded"
           value={selectedCategory}
@@ -113,7 +134,7 @@ export default function Filters({ onFilterChange }) {
 
       {/* Фильтр по бренду */}
       <div className="mb-4">
-        <label className="block text-sm font-medium">Бренд</label>
+        <label className="block font-regular text-xl mb-2">Бренд</label>
         <select
           className="w-full p-2 border rounded"
           value={selectedBrand}
@@ -130,7 +151,7 @@ export default function Filters({ onFilterChange }) {
 
       {/* Фильтр по цене */}
       <div className="mb-4">
-        <label className="block text-sm font-medium">Цена</label>
+        <label className="block font-regular text-xl mb-2">Цена</label>
         <div className="flex space-x-2">
           <input
             type="number"
@@ -146,6 +167,39 @@ export default function Filters({ onFilterChange }) {
             value={maxPrice}
             onChange={handleMaxPriceChange}
           />
+        </div>
+      </div>
+
+      {/* Фильтр по наличию */}
+      <div className="mb-4">
+        <label className="block font-regular text-xl mb-2">
+          Наличие на складе
+        </label>
+        <div className="flex space-x-2">
+          <input
+            type="radio"
+            name="availability"
+            id="all"
+            value="all"
+            checked={availability === "all"}
+            onChange={handleAvailabilityChange}
+          />
+          <label className="block font-light text-xl" htmlFor="all">
+            Все
+          </label>
+        </div>
+        <div className="flex space-x-2">
+          <input
+            type="radio"
+            name="availability"
+            id="available"
+            value="available"
+            checked={availability === "available"}
+            onChange={handleAvailabilityChange}
+          />
+          <label className="block font-light text-xl" htmlFor="available">
+            В наличии
+          </label>
         </div>
       </div>
     </div>
