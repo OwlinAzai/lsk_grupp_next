@@ -14,7 +14,7 @@ export default function Catalog() {
   const [sortedData, setSortedData] = useState(data.products);
   const [filters, setFilters] = useState({
     category: "",
-    brand: "",
+    brands: [],
     minPrice: "",
     maxPrice: "",
     availability: "all", // Include availability in the filters
@@ -36,28 +36,9 @@ export default function Catalog() {
     return "asc";
   });
 
-  // Restore filters and sorting from localStorage on mount
-  useEffect(() => {
-    const savedFilters = JSON.parse(localStorage.getItem("filters") || "{}");
-    if (savedFilters) {
-      setFilters(savedFilters);
-    }
-  }, []);
-
-  // Filtering products based on search query
-  const filterProducts = (query: string) => {
-    return data.products.filter(
-      (product) =>
-        product.name.toLowerCase().includes(query.toLowerCase()) ||
-        product.description.toLowerCase().includes(query.toLowerCase())
-    );
-  };
-
-  const filteredData = filterProducts(catalogSearchQuery);
-
-  // Applying filters (category, brand, price, availability)
+  // Apply filters
   const applyFilters = () => {
-    let filtered = [...filteredData];
+    let filtered = [...data.products];
 
     if (filters.category) {
       filtered = filtered.filter(
@@ -65,8 +46,10 @@ export default function Catalog() {
       );
     }
 
-    if (filters.brand) {
-      filtered = filtered.filter((product) => product.brand === filters.brand);
+    if (filters.brands.length > 0) {
+      filtered = filtered.filter((product) =>
+        filters.brands.includes(product.brand)
+      );
     }
 
     if (filters.minPrice) {
@@ -75,7 +58,7 @@ export default function Catalog() {
       );
     }
 
-    if (filters.maxPrice !== "") {
+    if (filters.maxPrice) {
       filtered = filtered.filter(
         (product) => product.price <= parseFloat(filters.maxPrice)
       );
@@ -88,7 +71,7 @@ export default function Catalog() {
     return filtered;
   };
 
-  // Sorting products by selected criteria
+  // Sorting
   const sortProducts = (filteredProducts: typeof data.products) => {
     const sorted = [...filteredProducts];
 
@@ -100,56 +83,42 @@ export default function Catalog() {
       );
     } else {
       return sorted.sort((a, b) =>
-        sortOrder === "asc"
-          ? Number(a.price) - Number(b.price)
-          : Number(b.price) - Number(a.price)
+        sortOrder === "asc" ? a.price - b.price : b.price - a.price
       );
     }
-  };
-
-  // Apply filters and sorting when filters or search query changes
-  useEffect(() => {
-    const filteredAndSortedData = sortProducts(applyFilters());
-    setSortedData(filteredAndSortedData);
-  }, [catalogSearchQuery, sortCriteria, sortOrder, filters]);
-
-  // Handle sort change
-  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value;
-    const [newSortCriteria, newSortOrder] = value.split("-") as [
-      "name" | "price",
-      "asc" | "desc",
-    ];
-
-    setSortCriteria(newSortCriteria);
-    setSortOrder(newSortOrder);
-
-    // Save to localStorage
-    localStorage.setItem("sortCriteria", newSortCriteria);
-    localStorage.setItem("sortOrder", newSortOrder);
   };
 
   // Handle filter change
   const handleFilterChange = (newFilters) => {
     setFilters((prevFilters) => {
       const updatedFilters = { ...prevFilters, ...newFilters };
-
-      // Save to localStorage
       localStorage.setItem("filters", JSON.stringify(updatedFilters));
-
       return updatedFilters;
     });
   };
 
+  // Handle sort criteria change
+  const handleSortChange = (event) => {
+    const [newSortCriteria, newSortOrder] = event.target.value.split("-");
+    setSortCriteria(newSortCriteria);
+    setSortOrder(newSortOrder);
+
+    // Save in localStorage
+    localStorage.setItem("sortCriteria", newSortCriteria);
+    localStorage.setItem("sortOrder", newSortOrder);
+  };
+
+  useEffect(() => {
+    const filteredAndSortedData = sortProducts(applyFilters());
+    setSortedData(filteredAndSortedData);
+  }, [filters, catalogSearchQuery, sortCriteria, sortOrder]);
+
   return (
     <div>
-      <Filters onFilterChange={handleFilterChange} />{" "}
-      {/* Add Filters component */}
+      <Filters onFilterChange={handleFilterChange} />
       <div className="pt-[22px] pb-[20px] mb-[20px] ml-[14rem] mr-[14rem] shadow-xl rounded-lg px-4 bg-[#f7f7f7]">
         <title>Каталог</title>
         <h1 className="text-4xl font-regular">Каталог</h1>
-
-        {/* Search bar */}
         <div className="mt-4 mb-4">
           <input
             type="text"
@@ -162,7 +131,6 @@ export default function Catalog() {
           />
         </div>
 
-        {/* Sorting */}
         <div className="mb-4">
           <select
             onChange={handleSortChange}
@@ -184,7 +152,6 @@ export default function Catalog() {
           </select>
         </div>
 
-        {/* Display products */}
         {sortedData.length > 0 ? (
           sortedData.map((product) => (
             <NextLink href={`catalog/${product.id}`} passHref key={product.id}>

@@ -5,24 +5,34 @@ import { data } from "../utils/data";
 
 // Создаем уникальные списки категорий и брендов
 const category = [...new Set(data.products.map((product) => product.category))];
-const brands = [...new Set(data.products.map((product) => product.brand))];
+
+// Функция для получения количества товаров по каждому бренду
+const getBrandCounts = () => {
+  const counts = {};
+  data.products.forEach((product) => {
+    counts[product.brand] = (counts[product.brand] || 0) + 1;
+  });
+  return counts;
+};
+
+const brandCounts = getBrandCounts();
 
 export default function Filters({ onFilterChange }) {
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedBrand, setSelectedBrand] = useState("");
+  const [selectedBrands, setSelectedBrands] = useState([]); // Массив для нескольких брендов
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
-  const [availability, setAvailability] = useState("all"); // Состояние для фильтра по наличию
+  const [availability, setAvailability] = useState("all");
 
   // Функция для восстановления состояния фильтров из localStorage
   const loadFiltersFromStorage = () => {
     const savedFilters = JSON.parse(localStorage.getItem("filters") as string);
     if (savedFilters) {
       setSelectedCategory(savedFilters.category || "");
-      setSelectedBrand(savedFilters.brand || "");
+      setSelectedBrands(savedFilters.brands || []); // Восстанавливаем выбранные бренды
       setMinPrice(savedFilters.minPrice || "");
       setMaxPrice(savedFilters.maxPrice || "");
-      setAvailability(savedFilters.availability || "all"); // Восстанавливаем фильтр по наличию
+      setAvailability(savedFilters.availability || "all");
     }
   };
 
@@ -42,22 +52,33 @@ export default function Filters({ onFilterChange }) {
     setSelectedCategory(newCategory);
     const filters = {
       category: newCategory,
-      brand: selectedBrand,
+      brands: selectedBrands, // Теперь массив брендов
       minPrice,
       maxPrice,
-      availability, // Добавляем фильтр по наличию
+      availability,
     };
     onFilterChange(filters);
     saveFiltersToStorage(filters);
   };
 
-  // Обработчик изменения бренда
+  // Обработчик изменения выбранных брендов
   const handleBrandChange = (event) => {
-    const newBrand = event.target.value;
-    setSelectedBrand(newBrand);
+    const brand = event.target.value;
+    const isChecked = event.target.checked;
+
+    let newSelectedBrands;
+    if (isChecked) {
+      newSelectedBrands = [...selectedBrands, brand];
+    } else {
+      newSelectedBrands = selectedBrands.filter(
+        (selectedBrand) => selectedBrand !== brand
+      );
+    }
+
+    setSelectedBrands(newSelectedBrands);
     const filters = {
       category: selectedCategory,
-      brand: newBrand,
+      brands: newSelectedBrands, // Обновляем массив брендов
       minPrice,
       maxPrice,
       availability,
@@ -72,7 +93,7 @@ export default function Filters({ onFilterChange }) {
     setMinPrice(newMinPrice);
     const filters = {
       category: selectedCategory,
-      brand: selectedBrand,
+      brands: selectedBrands,
       minPrice: newMinPrice,
       maxPrice,
       availability,
@@ -87,7 +108,7 @@ export default function Filters({ onFilterChange }) {
     setMaxPrice(newMaxPrice);
     const filters = {
       category: selectedCategory,
-      brand: selectedBrand,
+      brands: selectedBrands,
       minPrice,
       maxPrice: newMaxPrice,
       availability,
@@ -102,10 +123,10 @@ export default function Filters({ onFilterChange }) {
     setAvailability(newAvailability);
     const filters = {
       category: selectedCategory,
-      brand: selectedBrand,
+      brands: selectedBrands,
       minPrice,
       maxPrice,
-      availability: newAvailability, // Обновляем фильтр наличия
+      availability: newAvailability,
     };
     onFilterChange(filters);
     saveFiltersToStorage(filters);
@@ -132,21 +153,26 @@ export default function Filters({ onFilterChange }) {
         </select>
       </div>
 
-      {/* Фильтр по бренду */}
+      {/* Фильтр по бренду (несколько чекбоксов) */}
       <div className="mb-4">
         <label className="block font-regular text-xl mb-2">Бренд</label>
-        <select
-          className="w-full p-2 border rounded"
-          value={selectedBrand}
-          onChange={handleBrandChange}
-        >
-          <option value="">Все</option>
-          {brands.map((brand) => (
-            <option key={brand} value={brand}>
-              {brand}
-            </option>
+        <div className="flex flex-col space-y-2">
+          {Object.keys(brandCounts).map((brand) => (
+            <div key={brand} className="flex items-center">
+              <input
+                type="checkbox"
+                id={brand}
+                value={brand}
+                checked={selectedBrands.includes(brand)} // Проверка, выбран ли бренд
+                onChange={handleBrandChange}
+                className="mr-2"
+              />
+              <label htmlFor={brand} className="font-light text-xl">
+                {brand} ({brandCounts[brand]}) {/* Отображаем количество */}
+              </label>
+            </div>
           ))}
-        </select>
+        </div>
       </div>
 
       {/* Фильтр по цене */}

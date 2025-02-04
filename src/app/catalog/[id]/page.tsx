@@ -45,11 +45,9 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
   };
 
   return (
-    <div className="pt-[22px] pb-[22px] ml-[14rem] mr-[14rem] shadow-lg rounded-lg px-4 bg-white">
+    <div className="pt-[22px] pb-[22px] mb-4 ml-[14rem] mr-[14rem] shadow-lg rounded-lg px-4 bg-white">
       <title>{product.name}</title>
-      <h1>
-        <b>{product.name}</b>
-      </h1>
+      <h1 className="font-bold text-3xl uppercase">{product.name}</h1>
       <p>{product.description}</p>
       <p>
         <b>Цена:</b> {product?.price || "Уточняйте"} {product?.currency || ""}

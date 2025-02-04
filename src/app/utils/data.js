@@ -70,8 +70,8 @@ export const data = {
         {
             id: 6,
             category: 'Бпатлевка',
-            name: 'Бпатлевка BCRYL-PUTZ ST10. Старт-финиш. 20 кг. Польша.',
-            brand: 'BCRYL-PUTZ',
+            name: 'Бпатлевка DCRYL-PUTZ ST10. Старт-финиш. 20 кг. Польша.',
+            brand: 'DCRYL-PUTZ',
             description: 'Описание продукта 7',
             price: 700,
             currency: 'BYN',
