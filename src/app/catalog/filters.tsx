@@ -153,6 +153,27 @@ export default function Filters({ onFilterChange }) {
         </select>
       </div>
 
+      {/* Фильтр по цене */}
+      <div className="mb-4">
+        <label className="block font-regular text-xl mb-2">Цена</label>
+        <div className="flex space-x-2">
+          <input
+            type="number"
+            placeholder="От"
+            className="w-1/2 p-2 border rounded"
+            value={minPrice}
+            onChange={handleMinPriceChange}
+          />
+          <input
+            type="number"
+            placeholder="До"
+            className="w-1/2 p-2 border rounded"
+            value={maxPrice}
+            onChange={handleMaxPriceChange}
+          />
+        </div>
+      </div>
+
       {/* Фильтр по бренду (несколько чекбоксов) */}
       <div className="mb-4">
         <label className="block font-regular text-xl mb-2">Бренд</label>
@@ -172,27 +193,6 @@ export default function Filters({ onFilterChange }) {
               </label>
             </div>
           ))}
-        </div>
-      </div>
-
-      {/* Фильтр по цене */}
-      <div className="mb-4">
-        <label className="block font-regular text-xl mb-2">Цена</label>
-        <div className="flex space-x-2">
-          <input
-            type="number"
-            placeholder="От"
-            className="w-1/2 p-2 border rounded"
-            value={minPrice}
-            onChange={handleMinPriceChange}
-          />
-          <input
-            type="number"
-            placeholder="До"
-            className="w-1/2 p-2 border rounded"
-            value={maxPrice}
-            onChange={handleMaxPriceChange}
-          />
         </div>
       </div>
 
