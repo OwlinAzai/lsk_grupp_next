@@ -140,7 +140,7 @@ const Header = () => {
         {isDropdownVisible && (
           <div
             ref={dropdownRef}
-            className="absolute bg-white shadow-2xl mt-[230px] px-4 py-1 rounded-lg min-h-[160px] max-h-[160px] min-w-[300px] overflow-hidden z-10 transition-all duration-300 ease-in-out transform flex flex-col justify-start"
+            className="absolute bg-white shadow-2xl mt-64 px-4 py-1 rounded-lg min-h-[200px] max-h-[200px] min-w-[300px] overflow-hidden z-10 transition-all duration-300 ease-in-out transform flex flex-col justify-start"
             style={{
               width: inputWidth,
               boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
@@ -150,7 +150,7 @@ const Header = () => {
               <div className="overflow-y-auto">
                 {filteredProducts.map((product) => (
                   <NextLink key={product.id} href={`/catalog/${product.id}`}>
-                    <div className="p-0 hover:bg-gray-200 cursor-pointer inline-flex items-center space-x-3 border-b py-2">
+                    <div className="p-2 hover:bg-slate-400 cursor-pointer inline-flex items-center space-x-3 py-2 border-b">
                       <Image
                         src={product.image}
                         alt={product.name}

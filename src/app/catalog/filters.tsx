@@ -3,19 +3,17 @@
 import { useState, useEffect } from "react";
 import { data } from "../utils/data";
 
-// Создаем уникальные списки категорий и брендов
+// Создаем уникальные списки категорий
 const category = [...new Set(data.products.map((product) => product.category))];
 
 // Функция для получения количества товаров по каждому бренду
-const getBrandCounts = () => {
+const getBrandCounts = (products) => {
   const counts = {};
-  data.products.forEach((product) => {
+  products.forEach((product) => {
     counts[product.brand] = (counts[product.brand] || 0) + 1;
   });
   return counts;
 };
-
-const brandCounts = getBrandCounts();
 
 export default function Filters({ onFilterChange }) {
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -23,6 +21,16 @@ export default function Filters({ onFilterChange }) {
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [availability, setAvailability] = useState("all");
+
+  // Функция для получения брендов, относящихся к выбранной категории
+  const getBrandsByCategory = (category) => {
+    if (!category) return data.products; // Если категория не выбрана, возвращаем все товары
+    return data.products.filter((product) => product.category === category);
+  };
+
+  // Получаем список брендов для выбранной категории
+  const filteredProducts = getBrandsByCategory(selectedCategory);
+  const brandCounts = getBrandCounts(filteredProducts);
 
   // Функция для восстановления состояния фильтров из localStorage
   const loadFiltersFromStorage = () => {
@@ -50,9 +58,10 @@ export default function Filters({ onFilterChange }) {
   const handleCategoryChange = (event) => {
     const newCategory = event.target.value;
     setSelectedCategory(newCategory);
+    setSelectedBrands([]); // Сбрасываем выбранные бренды при изменении категории
     const filters = {
       category: newCategory,
-      brands: selectedBrands, // Теперь массив брендов
+      brands: [], // Сбрасываем бренды
       minPrice,
       maxPrice,
       availability,

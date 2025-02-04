@@ -28,6 +28,6 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "src/app/catalog/[item]/[item].jsx"
-, "src/app/components/SendMail.jsx"  ],
+, "src/app/components/SendMail.jsx", "src/app/catalog/filters.jsx"  ],
   "exclude": ["node_modules"]
 }

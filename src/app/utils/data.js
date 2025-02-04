@@ -9,7 +9,7 @@ export const data = {
             description: 'Описание продукта 1',
             price: 9.66,
             currency: 'BYN',
-            image: "/images/1.png",
+            image: "/images/1.jpeg",
             quantity: 100,
         },
         {
@@ -20,7 +20,7 @@ export const data = {
             description: 'Описание продукта 2',
             price: 0,
             currency: '',
-            image: "/images/1.png",
+            image: "/images/1.jpeg",
             quantity: 0,
         },
         {
@@ -31,7 +31,7 @@ export const data = {
             description: 'Описание продукта 3',
             price: 200,
             currency: 'BYN',
-            image: "/images/1.png",
+            image: "/images/1.jpeg",
             quantity: 100,
         },
         {
@@ -42,7 +42,7 @@ export const data = {
             description: 'Описание продукта 4',
             price: 400,
             currency: 'BYN',
-            image: "/images/1.png",
+            image: "/images/1.jpeg",
             quantity: 100,
         },
         {
@@ -53,7 +53,7 @@ export const data = {
             description: 'Описание продукта 5',
             price: 500,
             currency: 'BYN',
-            image: "/images/1.png",
+            image: "/images/1.jpeg",
             quantity: 100,
         },
         {
@@ -64,7 +64,7 @@ export const data = {
             description: 'Описание продукта 6',
             price: 600,
             currency: 'BYN',
-            image: "/images/1.png",
+            image: "/images/1.jpeg",
             quantity: 100,
         },
         {
@@ -75,7 +75,7 @@ export const data = {
             description: 'Описание продукта 7',
             price: 700,
             currency: 'BYN',
-            image: "/images/1.png",
+            image: "/images/1.jpeg",
             quantity: 100,
         },
         {
@@ -86,7 +86,7 @@ export const data = {
             description: 'Описание продукта 7',
             price: 700,
             currency: 'BYN',
-            image: "/images/1.png",
+            image: "/images/1.jpeg",
             quantity: 100,
         },
     ],
