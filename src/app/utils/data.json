@@ -1,19 +1,21 @@
 {
-    "products": [{
-        "id": "number",
-        "productName": "string",
-        "amount": "number", //количество в единицах измерения, например 5 кг
-        "unitOfMeasure": "string", //название единиц измерения в которых поставляется, надо подумать о надстрочных и подстрочных символах, мб добавить кастомный тег для хранения в базе или в span со стилями
-        "manufacturer": "string", //производитель    
-        "productType": "string",
-        "isMainItem": "boolean", //нужно ли выводить элемент на главной странице
-        "description": "text",
-        "imageURL": "string", //ссылка на изображение в storage supabase
-        "otherAttributes": [
-            {
-                "name": "string",
-                "value": "string"
-            }
-        ]
-    }]
+  "products": [
+    {
+      "id": "number",
+      "productName": "string",
+      "amount": "number", //количество в единицах измерения, например 5 кг
+      "unitOfMeasure": "string", //название единиц измерения в которых поставляется, надо подумать о надстрочных и подстрочных символах, мб добавить кастомный тег для хранения в базе или в span со стилями
+      "manufacturer": "string", //производитель
+      "productType": "string",
+      "isMainItem": "boolean", //нужно ли выводить элемент на главной странице
+      "description": "text",
+      "imageURL": "string", //ссылка на изображение в storage supabase
+      "otherAttributes": [
+        {
+          "name": "string",
+          "value": "string"
+        }
+      ]
+    }
+  ]
 }

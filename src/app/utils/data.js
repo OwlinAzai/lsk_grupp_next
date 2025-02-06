@@ -51,8 +51,12 @@ export const data = {
             unitOfMeasure: 'кг',
             "otherAttributes": [
                 {
-                    "name": "string",
-                    "value": "string"
+                    "name": "Параметр 1",
+                    "value": "Значение 1",
+                },
+                {
+                    "name": "Параметр 2",
+                    "value": "Значение 2"
                 }
             ]
         },
@@ -68,10 +72,10 @@ export const data = {
             imageURL: "/images/1.jpeg",
             amount: 1,
             unitOfMeasure: 'кг',
-            "otherAttributes": [
+            otherAttributes: [
                 {
-                    "name": "string",
-                    "value": "string"
+                    "name": "Параметр 1",
+                    "value": "Значение 1"
                 }
             ]
         },

@@ -73,6 +73,38 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
           width={300}
           height={300}
         />
+
+        {/* Отображение таблицы с другими аттрибутами */}
+        {product.otherAttributes && product.otherAttributes.length > 0 && (
+          <div className="mt-4">
+            <h2 className="text-xl font-semibold mb-2">Характеристики:</h2>
+            <table className="table-auto w-full border-collapse">
+              <thead>
+                <tr>
+                  <th className="px-4 py-2 border border-gray-300">Параметр</th>
+                  <th className="px-4 py-2 border border-gray-300">Значение</th>
+                </tr>
+              </thead>
+              <tbody>
+                {product.otherAttributes.map((attribute, index) => (
+                  <tr key={index}>
+                    <td className="px-4 py-2 border border-gray-300">
+                      {attribute.name !== "string"
+                        ? attribute.name
+                        : "Не указано"}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-300">
+                      {attribute.value !== "string"
+                        ? attribute.value
+                        : "Не указано"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
         <Button
           className="bg-orange-500 hover:bg-orange-400 text-white font-bold py-2 px-4 hover:border-orange-500 rounded mt-2"
           onClick={handleAddToCart}
