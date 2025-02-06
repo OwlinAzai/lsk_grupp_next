@@ -14,6 +14,23 @@
   }
 } */
 
+/* Скрыть стрелки в input[type="number"] */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield; /* Firefox */
+  appearance: none; /* Для остальных браузеров */
+}
+
+/* Центрирование текста в поле */
+input[type="number"] {
+  text-align: center; /* Центрирует значение в поле */
+}
+
 body {
   color: var(--foreground);
   background: var(--background);

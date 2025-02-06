@@ -27,10 +27,16 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Рассчитываем общую сумму
-  const totalPrice = cartItemsArray.reduce((total, item) => {
-    return total + item.price * item.quantity;
-  }, 0);
+  // Рассчитываем общую сумму и определяем валюту
+  let totalPrice = 0;
+  let currency = ""; // Переменная для хранения валюты
+
+  cartItemsArray.forEach((item) => {
+    totalPrice += item.price * item.quantity;
+    if (!currency && item.currency) {
+      currency = item.currency; // Берем валюту из первого товара
+    }
+  });
 
   // Настройка транспорта для отправки письма
   const transport = nodemailer.createTransport({
@@ -45,7 +51,7 @@ export async function POST(request: NextRequest) {
   const cartItems = cartItemsArray
     .map(
       (item: {
-        name: string;
+        productName: string;
         quantity: number;
         price: number;
         currency: string;
@@ -57,7 +63,7 @@ export async function POST(request: NextRequest) {
             : `${item.price.toFixed(2)} ${item.currency || ""}`;
         return ` 
         <tr>
-          <td style="padding: 10px; border: 1px solid #ddd; text-align: left;">${item.name}</td>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: left;">${item.productName}</td>
           <td style="padding: 10px; border: 1px solid #ddd; text-align: right;">${item.quantity}</td> 
           <td style="padding: 10px; border: 1px solid #ddd; text-align: right;">${itemPrice}</td>
         </tr>
@@ -147,7 +153,7 @@ export async function POST(request: NextRequest) {
 
           <!-- Total Price -->
           <div class="total-price">
-            <p>Total: ${totalPrice.toFixed(2)}</p>
+            <p>Total: ${totalPrice.toFixed(2)} ${currency}</p>
           </div>
 
           <div class="footer">

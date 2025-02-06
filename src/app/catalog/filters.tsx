@@ -1,43 +1,67 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { data } from "../utils/data";
+import { data } from "../utils/data"; // Импорт данных
 
 // Создаем уникальные списки категорий
-const category = [...new Set(data.products.map((product) => product.category))];
+const productTypes = [
+  ...new Set(data.products.map((product) => product.productType)),
+];
 
 // Функция для получения количества товаров по каждому бренду
 const getBrandCounts = (products) => {
   const counts = {};
   products.forEach((product) => {
-    counts[product.brand] = (counts[product.brand] || 0) + 1;
+    counts[product.manufacturer] = (counts[product.manufacturer] || 0) + 1;
   });
   return counts;
 };
 
-export default function Filters({ onFilterChange }) {
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedBrands, setSelectedBrands] = useState([]); // Массив для нескольких брендов
-  const [minPrice, setMinPrice] = useState("");
-  const [maxPrice, setMaxPrice] = useState("");
-  const [availability, setAvailability] = useState("all");
+// Функция для получения брендов, которые есть в наличии
+const getAvailableBrands = (products) => {
+  const availableBrands = new Set();
+  products.forEach((product) => {
+    if (product.amount > 0) {
+      // Проверяем, что товар есть в наличии
+      availableBrands.add(product.manufacturer);
+    }
+  });
+  return availableBrands;
+};
 
-  // Функция для получения брендов, относящихся к выбранной категории
-  const getBrandsByCategory = (category) => {
-    if (!category) return data.products; // Если категория не выбрана, возвращаем все товары
-    return data.products.filter((product) => product.category === category);
+export default function Filters({ onFilterChange }) {
+  const [selectedType, setSelectedType] = useState(""); // Категория
+  const [selectedManufacturers, setSelectedManufacturers] = useState([]); // Массив для нескольких брендов
+  const [minPrice, setMinPrice] = useState(""); // Минимальная цена
+  const [maxPrice, setMaxPrice] = useState(""); // Максимальная цена
+  const [availability, setAvailability] = useState("all"); // Наличие на складе
+
+  // Функция для получения товаров, относящихся к выбранной категории
+  const getProductsByCategory = (productType) => {
+    if (!productType) return data.products; // Если категория не выбрана, возвращаем все товары
+    return data.products.filter(
+      (product) => product.productType === productType
+    );
   };
 
-  // Получаем список брендов для выбранной категории
-  const filteredProducts = getBrandsByCategory(selectedCategory);
+  // Получаем список товаров по выбранной категории
+  const filteredProducts = getProductsByCategory(selectedType);
+
+  // Получаем бренды, которые есть в наличии, если выбран параметр "В наличии"
+  const availableBrands =
+    availability === "available"
+      ? getAvailableBrands(filteredProducts)
+      : new Set(Object.keys(getBrandCounts(filteredProducts)));
+
+  // Получаем количество товаров по брендам
   const brandCounts = getBrandCounts(filteredProducts);
 
   // Функция для восстановления состояния фильтров из localStorage
   const loadFiltersFromStorage = () => {
-    const savedFilters = JSON.parse(localStorage.getItem("filters") as string);
+    const savedFilters = JSON.parse(localStorage.getItem("filters") || "{}");
     if (savedFilters) {
-      setSelectedCategory(savedFilters.category || "");
-      setSelectedBrands(savedFilters.brands || []); // Восстанавливаем выбранные бренды
+      setSelectedType(savedFilters.type || "");
+      setSelectedManufacturers(savedFilters.manufacturers || []); // Восстанавливаем выбранные бренды
       setMinPrice(savedFilters.minPrice || "");
       setMaxPrice(savedFilters.maxPrice || "");
       setAvailability(savedFilters.availability || "all");
@@ -55,13 +79,13 @@ export default function Filters({ onFilterChange }) {
   };
 
   // Обработчик изменения категории
-  const handleCategoryChange = (event) => {
-    const newCategory = event.target.value;
-    setSelectedCategory(newCategory);
-    setSelectedBrands([]); // Сбрасываем выбранные бренды при изменении категории
+  const handleTypeChange = (event) => {
+    const newType = event.target.value;
+    setSelectedType(newType);
+    setSelectedManufacturers([]); // Сбрасываем выбранные бренды при изменении категории
     const filters = {
-      category: newCategory,
-      brands: [], // Сбрасываем бренды
+      productTypes: newType,
+      manufacturers: [], // Сбрасываем бренды
       minPrice,
       maxPrice,
       availability,
@@ -71,23 +95,23 @@ export default function Filters({ onFilterChange }) {
   };
 
   // Обработчик изменения выбранных брендов
-  const handleBrandChange = (event) => {
-    const brand = event.target.value;
+  const handleManufacturerChange = (event) => {
+    const manufacturer = event.target.value;
     const isChecked = event.target.checked;
 
-    let newSelectedBrands;
+    let newSelectedManufacturers;
     if (isChecked) {
-      newSelectedBrands = [...selectedBrands, brand];
+      newSelectedManufacturers = [...selectedManufacturers, manufacturer];
     } else {
-      newSelectedBrands = selectedBrands.filter(
-        (selectedBrand) => selectedBrand !== brand
+      newSelectedManufacturers = selectedManufacturers.filter(
+        (selectedManufacturer) => selectedManufacturer !== manufacturer
       );
     }
 
-    setSelectedBrands(newSelectedBrands);
+    setSelectedManufacturers(newSelectedManufacturers);
     const filters = {
-      category: selectedCategory,
-      brands: newSelectedBrands, // Обновляем массив брендов
+      productTypes: selectedType,
+      manufacturers: newSelectedManufacturers, // Обновляем массив брендов
       minPrice,
       maxPrice,
       availability,
@@ -101,8 +125,8 @@ export default function Filters({ onFilterChange }) {
     const newMinPrice = event.target.value;
     setMinPrice(newMinPrice);
     const filters = {
-      category: selectedCategory,
-      brands: selectedBrands,
+      productTypes: selectedType,
+      manufacturers: selectedManufacturers,
       minPrice: newMinPrice,
       maxPrice,
       availability,
@@ -116,8 +140,8 @@ export default function Filters({ onFilterChange }) {
     const newMaxPrice = event.target.value;
     setMaxPrice(newMaxPrice);
     const filters = {
-      category: selectedCategory,
-      brands: selectedBrands,
+      productTypes: selectedType,
+      manufacturers: selectedManufacturers,
       minPrice,
       maxPrice: newMaxPrice,
       availability,
@@ -131,8 +155,8 @@ export default function Filters({ onFilterChange }) {
     const newAvailability = event.target.value;
     setAvailability(newAvailability);
     const filters = {
-      category: selectedCategory,
-      brands: selectedBrands,
+      productTypes: selectedType,
+      manufacturers: selectedManufacturers,
       minPrice,
       maxPrice,
       availability: newAvailability,
@@ -142,21 +166,21 @@ export default function Filters({ onFilterChange }) {
   };
 
   return (
-    <div className="pt-[22px] pb-[20px] mb-[20px] ml-[14rem] mr-[14rem] shadow-xl rounded-lg px-4 bg-[#f7f7f7]">
+    <div className="pt-[22px] pb-[20px] mb-[20px] ml-[14rem] mr-[14rem] shadow-xl rounded-lg px-4 bg-white">
       <h1 className="text-4xl font-regular mb-3">Фильтры</h1>
 
       {/* Фильтр по категории */}
       <div className="mb-4">
         <label className="block font-regular text-xl mb-2">Категория</label>
         <select
-          className="w-full p-2 border rounded"
-          value={selectedCategory}
-          onChange={handleCategoryChange}
+          className="w-full p-2 border-2 border-zinc-500 focus:border-orange-400 rounded-lg"
+          value={selectedType}
+          onChange={handleTypeChange}
         >
           <option value="">Все</option>
-          {category.map((category) => (
-            <option key={category} value={category}>
-              {category}
+          {productTypes.map((type) => (
+            <option key={type} value={type}>
+              {type}
             </option>
           ))}
         </select>
@@ -169,14 +193,14 @@ export default function Filters({ onFilterChange }) {
           <input
             type="number"
             placeholder="От"
-            className="w-1/2 p-2 border rounded"
+            className="w-1/2 p-2 outline-none border-2 border-zinc-500 focus:border-orange-400 rounded-lg"
             value={minPrice}
             onChange={handleMinPriceChange}
           />
           <input
             type="number"
             placeholder="До"
-            className="w-1/2 p-2 border rounded"
+            className="w-1/2 p-2 outline-none border-2 border-zinc-500 focus:border-orange-400 rounded-lg"
             value={maxPrice}
             onChange={handleMaxPriceChange}
           />
@@ -187,21 +211,27 @@ export default function Filters({ onFilterChange }) {
       <div className="mb-4">
         <label className="block font-regular text-xl mb-2">Бренд</label>
         <div className="flex flex-col space-y-2">
-          {Object.keys(brandCounts).map((brand) => (
-            <div key={brand} className="flex items-center">
-              <input
-                type="checkbox"
-                id={brand}
-                value={brand}
-                checked={selectedBrands.includes(brand)} // Проверка, выбран ли бренд
-                onChange={handleBrandChange}
-                className="mr-2"
-              />
-              <label htmlFor={brand} className="font-light text-xl">
-                {brand} ({brandCounts[brand]}) {/* Отображаем количество */}
-              </label>
-            </div>
-          ))}
+          {Object.keys(brandCounts)
+            .filter(
+              (manufacturer) =>
+                availability === "all" || availableBrands.has(manufacturer)
+            ) // Фильтруем бренды, если "В наличии"
+            .map((manufacturer) => (
+              <div key={manufacturer} className="flex items-center">
+                <input
+                  type="checkbox"
+                  id={manufacturer}
+                  value={manufacturer}
+                  checked={selectedManufacturers.includes(manufacturer)} // Проверка, выбран ли бренд
+                  onChange={handleManufacturerChange}
+                  className="mr-2"
+                />
+                <label htmlFor={manufacturer} className="font-light text-xl">
+                  {manufacturer} ({brandCounts[manufacturer]}){" "}
+                  {/* Отображаем количество */}
+                </label>
+              </div>
+            ))}
         </div>
       </div>
 

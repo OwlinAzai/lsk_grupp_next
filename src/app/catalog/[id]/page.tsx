@@ -1,15 +1,19 @@
 "use client"; // Указываем, что это компонент клиента
 
 import { Button } from "@mui/material";
+import Menu from "./../../components/menu";
 import NextLink from "next/link";
 import Image from "next/image";
-import { data } from "./../../utils/data";
-import { use } from "react";
+import { data } from "./../../utils/data"; // Подключаем данные
+import { use } from "react"; // Импортируем use из React
 
 export default function Page({ params }: { params: Promise<{ id: string }> }) {
-  // Unwrap the params Promise using `use()`
+  // Разворачиваем параметр id из Promise с использованием `use()`
   const unwrappedParams = use(params);
-  const product = data.products[Number(unwrappedParams.id)];
+  const productId = Number(unwrappedParams.id); // Преобразуем id в число
+
+  // Находим продукт по id
+  const product = data.products.find((item) => item.id === productId);
 
   // Проверка на существование продукта
   if (!product) {
@@ -45,31 +49,44 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
   };
 
   return (
-    <div className="pt-[22px] pb-[22px] mb-4 ml-[14rem] mr-[14rem] shadow-lg rounded-lg px-4 bg-white">
-      <title>{product.name}</title>
-      <h1 className="font-bold text-3xl uppercase">{product.name}</h1>
-      <p>{product.description}</p>
-      <p>
-        <b>Цена:</b> {product?.price || "Уточняйте"} {product?.currency || ""}
-      </p>
-      <p>
-        <b>Количество:</b>{" "}
-        {product.quantity > 0 ? product.quantity : "Нет в наличии. Под заказ."}
-      </p>
-      <Image src={product.image} alt={product.name} width={300} height={300} />
-      <Button
-        className="bg-orange-500 hover:bg-orange-400 text-white font-bold py-2 px-4 hover:border-orange-500 rounded mt-2"
-        onClick={handleAddToCart}
-      >
-        Добавить в корзину
-      </Button>
-      <br />
-      {/* Avoid nested <a> tags by using only NextLink */}
-      <NextLink href="/catalog">
-        <Button className="bg-orange-500 hover:bg-orange-400 text-white font-bold py-2 px-4 hover:border-orange-500 rounded mt-2">
-          Вернуться
+    <div className="ml-[14rem] ">
+      <div className="pt-[22px] pb-[22px] mb-4 mr-[14rem] shadow-lg rounded-lg px-4 bg-white">
+        <title>{product.productName}</title>
+        <h1 className="font-bold text-3xl uppercase">{product.productName}</h1>
+        <p>{product.description}</p>
+        <p>
+          <b>Цена:</b> {product.price} {product.currency}
+        </p>
+        <p>
+          <b>Количество:</b>{" "}
+          {product.amount > 0 ? product.amount : "Нет в наличии. Под заказ."}
+        </p>
+        <p>
+          <b>Единица измерения:</b> {product.unitOfMeasure}
+        </p>
+        <p>
+          <b>Производитель:</b> {product.manufacturer}
+        </p>
+        <Image
+          src={product.imageURL}
+          alt={product.productName}
+          width={300}
+          height={300}
+        />
+        <Button
+          className="bg-orange-500 hover:bg-orange-400 text-white font-bold py-2 px-4 hover:border-orange-500 rounded mt-2"
+          onClick={handleAddToCart}
+        >
+          Добавить в корзину
         </Button>
-      </NextLink>
+        <br />
+        {/* Avoid nested <a> tags by using only NextLink */}
+        <NextLink href="/catalog">
+          <Button className="bg-orange-500 hover:bg-orange-400 text-white font-bold py-2 px-4 hover:border-orange-500 rounded mt-2">
+            Вернуться
+          </Button>
+        </NextLink>
+      </div>
     </div>
   );
 }

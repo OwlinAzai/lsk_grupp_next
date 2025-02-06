@@ -25,7 +25,7 @@ const Header = () => {
       setFilteredProducts(
         data.products.filter(
           (product) =>
-            product.name
+            product.productName
               .toLowerCase()
               .includes(headerSearchQuery.toLowerCase()) ||
             product.description
@@ -152,16 +152,16 @@ const Header = () => {
                   <NextLink key={product.id} href={`/catalog/${product.id}`}>
                     <div className="p-2 hover:bg-slate-400 cursor-pointer inline-flex items-center space-x-3 py-2 border-b">
                       <Image
-                        src={product.image}
-                        alt={product.name}
+                        src={product.imageURL}
+                        alt={product.productName}
                         width={60}
                         height={60}
                         className="object-cover h-[60px] w-[60px]"
                       />
                       <div className="flex flex-col justify-center">
-                        <p className="text-sm">{product.name}</p>
+                        <p className="text-sm">{product.productName}</p>
                         <p className="text-xs text-gray-500">
-                          {product.quantity > 0
+                          {product.amount > 0
                             ? product.price + " " + product.currency
                             : "Нет в наличии. Под заказ."}
                         </p>

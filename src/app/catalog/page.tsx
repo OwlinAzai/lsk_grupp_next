@@ -7,14 +7,15 @@ import { data } from "./../utils/data"; // Your product data
 import Image from "next/image";
 import { Button } from "@mui/material";
 import Filters from "./filters"; // Import Filters component
+import { manufacturers, productTypes } from "@/db/schema/products";
 
 export default function Catalog() {
   const { catalogSearchQuery, setCatalogSearchQuery } = useSearch(); // Getting search query from context
 
   const [sortedData, setSortedData] = useState(data.products);
   const [filters, setFilters] = useState({
-    category: "",
-    brands: [],
+    productTypes: "",
+    manufacturers: [],
     minPrice: "",
     maxPrice: "",
     availability: "all", // Include availability in the filters
@@ -40,15 +41,15 @@ export default function Catalog() {
   const applyFilters = () => {
     let filtered = [...data.products];
 
-    if (filters.category) {
+    if (filters.productTypes) {
       filtered = filtered.filter(
-        (product) => product.category === filters.category
+        (product) => product.productType === filters.productTypes
       );
     }
 
-    if (filters.brands.length > 0) {
+    if (filters.manufacturers.length > 0) {
       filtered = filtered.filter((product) =>
-        filters.brands.includes(product.brand)
+        filters.manufacturers.includes(product.manufacturer)
       );
     }
 
@@ -65,21 +66,40 @@ export default function Catalog() {
     }
 
     if (filters.availability === "available") {
-      filtered = filtered.filter((product) => product.quantity > 0); // Только доступные товары
+      filtered = filtered.filter((product) => product.amount > 0); // Только доступные товары
     }
 
     return filtered;
+  };
+
+  // Function to filter products based on search query
+  const searchProducts = (filteredProducts) => {
+    if (!catalogSearchQuery) return filteredProducts; // If no search query, return all filtered products
+
+    return filteredProducts.filter((product) => {
+      const searchQueryLower = catalogSearchQuery.toLowerCase();
+      const productNameLower = product.productName.toLowerCase();
+      const productTypeLower = product.productType.toLowerCase();
+      const manufacturerLower = product.manufacturer.toLowerCase();
+
+      // Search across product name, type, and manufacturer
+      return (
+        productNameLower.includes(searchQueryLower) ||
+        productTypeLower.includes(searchQueryLower) ||
+        manufacturerLower.includes(searchQueryLower)
+      );
+    });
   };
 
   // Sorting
   const sortProducts = (filteredProducts: typeof data.products) => {
     const sorted = [...filteredProducts];
 
-    if (sortCriteria === "name") {
+    if (sortCriteria === "productName") {
       return sorted.sort((a, b) =>
         sortOrder === "asc"
-          ? a.name.localeCompare(b.name)
-          : b.name.localeCompare(a.name)
+          ? a.productName.localeCompare(b.productName)
+          : b.productName.localeCompare(a.productName)
       );
     } else {
       return sorted.sort((a, b) =>
@@ -89,7 +109,7 @@ export default function Catalog() {
   };
 
   // Handle filter change
-  const handleFilterChange = (newFilters) => {
+  const handleFilterChange = (newFilters = {}) => {
     setFilters((prevFilters) => {
       const updatedFilters = { ...prevFilters, ...newFilters };
       localStorage.setItem("filters", JSON.stringify(updatedFilters));
@@ -109,14 +129,16 @@ export default function Catalog() {
   };
 
   useEffect(() => {
-    const filteredAndSortedData = sortProducts(applyFilters());
-    setSortedData(filteredAndSortedData);
+    const filteredData = applyFilters();
+    const searchedData = searchProducts(filteredData); // Apply search query
+    const sortedData = sortProducts(searchedData);
+    setSortedData(sortedData);
   }, [filters, catalogSearchQuery, sortCriteria, sortOrder]);
 
   return (
     <div>
       <Filters onFilterChange={handleFilterChange} />
-      <div className="pt-[22px] pb-[20px] mb-[20px] ml-[14rem] mr-[14rem] shadow-xl rounded-lg px-4 bg-[#f7f7f7]">
+      <div className="pt-[22px] pb-[20px] mb-[20px] ml-[14rem] mr-[14rem] shadow-xl rounded-lg px-4 bg-white">
         <title>Каталог</title>
         <h1 className="text-4xl font-regular">Каталог</h1>
         <div className="mt-4 mb-4">
@@ -125,7 +147,7 @@ export default function Catalog() {
             name="search"
             id="search"
             placeholder="Поиск в Каталоге. Например, “шпатлевка”"
-            className="w-full outline-none bg-transparent text-gray-600 text-base font-oswald border-b-2 border-zinc-500"
+            className="w-full outline-none bg-white text-gray-600 text-base font-oswald border-2 h-10 pl-2 pr-2 rounded-lg border-zinc-500 focus:border-orange-400"
             value={catalogSearchQuery}
             onChange={(e) => setCatalogSearchQuery(e.target.value)}
           />
@@ -162,8 +184,8 @@ export default function Catalog() {
                 <div className="flex justify-between">
                   <div className="flex pr-4 items-center">
                     <Image
-                      src={product.image}
-                      alt={product.name}
+                      src={product.imageURL}
+                      alt={product.productName}
                       width={100}
                       height={100}
                     />
@@ -171,14 +193,14 @@ export default function Catalog() {
                   <div className="wrapper w-[2px] bg-gradient-to-b from-[#EC4700] to-[#FCCA27] rounded-md"></div>
                   <div className="flex-1 ml-4 align-middle height-full">
                     <h1 className="text-2xl mt-4 font-regular">
-                      {product.name}
+                      {product.productName}
                     </h1>
                     <p className="mt-2 font-light text-xl">
-                      {product.quantity > 0 ? "В наличии" : "Нет в наличии"}
+                      {product.amount > 0 ? "В наличии" : "Нет в наличии"}
                     </p>
                     <Button className="text-black bg-yellow font-regular text-xl normal-case mt-4 w-24 h-16 rounded-lg leading-6">
                       {product.price ? product.price : "Уточняйте"} <br />
-                      {product.price ? "руб./шт." : ""}
+                      {product.price ? "руб./" + product.unitOfMeasure : ""}
                     </Button>
                   </div>
                 </div>
