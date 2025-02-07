@@ -118,7 +118,7 @@ const Contact: FC = () => {
     <div className="bg-[#e4e4e4]">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="mx-auto mb-4 p-6 bg-white rounded-lg shadow-lg ml-[14rem] mr-[14rem]"
+        className="pt-6 pb-6 mb-4 mx-auto pl-4 pr-4 sm:mr-4 sm:ml-4 lg:ml-32 lg:mr-32 mt-4 shadow-xl rounded-lg px-4 bg-white"
       >
         <h1 className="text-4xl font-regular text-center mb-4">Contact Us</h1>
 

@@ -1,12 +1,18 @@
-import Menu from "../components/menu";
+"use client";
+
+import Link from "next/link";
+import React from "react";
+import { useState } from "react";
 
 export default function About() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   return (
     <>
       <div className="flex flex-cols-2 font-sans align-middle">
         <title>О нас</title>
-        <Menu />
-        <div className="pt-[1.37rem] pb-[1.37rem] mb-[1.37rem] mr-[14rem] shadow-xl rounded-lg px-[1rem] bg-white">
+        {/* Main Content */}
+        <div className="p-6 mb-[22px] shadow-xl rounded-lg px-[1rem] sm:pr-4 sm:mr-4 sm:ml-4 lg:ml-32 lg:mr-32 bg-white">
           <div>
             <h1 className="text-4xl text-center font-medium">О нас</h1>
             <div className="flex items-center bg-orange-500 h-1 w-[130px] m-auto mt-2 mb-5 font-light rounded-md" />

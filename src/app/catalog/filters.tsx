@@ -166,7 +166,7 @@ export default function Filters({ onFilterChange }) {
   };
 
   return (
-    <div className="pt-[22px] pb-[20px] mb-[20px] ml-[14rem] mr-[14rem] shadow-xl rounded-lg px-4 bg-white">
+    <div className="pt-6 pb-5 mx-auto sm:ml-4 pl-4 pr-4 sm:mr-4 lg:ml-32 lg:mr-32 mt-4 mb-4 shadow-xl rounded-lg px-4 bg-white">
       <h1 className="text-4xl font-regular mb-3">Фильтры</h1>
 
       {/* Фильтр по категории */}
@@ -189,18 +189,18 @@ export default function Filters({ onFilterChange }) {
       {/* Фильтр по цене */}
       <div className="mb-4">
         <label className="block font-regular text-xl mb-2">Цена</label>
-        <div className="flex space-x-2">
+        <div className="flex sm:space-x-2 lg:space-x-4">
           <input
             type="number"
             placeholder="От"
-            className="w-1/2 p-2 outline-none border-2 border-zinc-500 focus:border-orange-400 rounded-lg"
+            className="w-full sm:w-1/2 p-2 outline-none border-2 border-zinc-500 focus:border-orange-400 rounded-lg"
             value={minPrice}
             onChange={handleMinPriceChange}
           />
           <input
             type="number"
             placeholder="До"
-            className="w-1/2 p-2 outline-none border-2 border-zinc-500 focus:border-orange-400 rounded-lg"
+            className="w-full sm:w-1/2 p-2 outline-none border-2 border-zinc-500 focus:border-orange-400 rounded-lg"
             value={maxPrice}
             onChange={handleMaxPriceChange}
           />
@@ -248,6 +248,7 @@ export default function Filters({ onFilterChange }) {
             value="all"
             checked={availability === "all"}
             onChange={handleAvailabilityChange}
+            className="mr-2"
           />
           <label className="block font-light text-xl" htmlFor="all">
             Все
@@ -261,6 +262,7 @@ export default function Filters({ onFilterChange }) {
             value="available"
             checked={availability === "available"}
             onChange={handleAvailabilityChange}
+            className="mr-2"
           />
           <label className="block font-light text-xl" htmlFor="available">
             В наличии
