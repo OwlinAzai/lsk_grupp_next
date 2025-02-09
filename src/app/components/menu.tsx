@@ -61,7 +61,7 @@ export default function Menu({ isMenuOpen, setMenuOpen }: MenuProps) {
               className={`text-4xl font-medium decoration-orange-500 hover:text-orange-400 block mt-8 px-4 py-2 rounded-lg transition-colors ${
                 pathname === "/request"
                   ? "bg-orange-100 text-orange-500"
-                  : "text-black hover:bg-gray-100"
+                  : "bg-orange-100 text-orange-500"
               }`}
               onClick={() => setMenuOpen(false)}
             >
@@ -150,7 +150,7 @@ export default function Menu({ isMenuOpen, setMenuOpen }: MenuProps) {
             <Link
               component={NextLink}
               href="/about"
-              className={`text-4xl font-medium decoration-black hover:text-orange-400 block pt-2 px-4 py-2 rounded-lg transition-colors ${
+              className={`text-4xl font-medium decoration-orange-500 hover:text-orange-400 block px-4 mt-2 pt-0 py-2 rounded-lg transition-colors ${
                 pathname === "/about"
                   ? "bg-orange-100 text-orange-500"
                   : "text-black hover:bg-gray-100"
