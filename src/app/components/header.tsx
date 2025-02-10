@@ -79,7 +79,7 @@ const Header = () => {
             {filteredProducts.length > 0 ? (
               filteredProducts.map((product) => (
                 <NextLink key={product.id} href={`/catalog/${product.id}`}>
-                  <div className="p-2 hover:bg-gray-100 cursor-pointer flex items-center space-x-3 border-b last:border-b-0">
+                  <div className="p-2 hover:bg-[#fdf3e1] cursor-pointer flex items-center space-x-3 border-b last:border-b-0">
                     <Image
                       src={product.imageURL}
                       alt={product.productName}
