@@ -36,7 +36,6 @@ export const data = {
                     "value": "string"
                 }
             ],
-            rating: 4.86,
         },
         {
             id: 2,
@@ -60,7 +59,6 @@ export const data = {
                     "value": "Значение 2"
                 }
             ],
-            rating: 4.86,
         },
         {
             id: 3,
@@ -80,7 +78,6 @@ export const data = {
                     "value": "Значение 1"
                 }
             ],
-            rating: 4.86,
         },
         {
             id: 4,
@@ -100,7 +97,6 @@ export const data = {
                     "value": "Значение 1"
                 }
             ],
-            rating: 4.86,
         },
         {
             id: 5,
@@ -120,7 +116,6 @@ export const data = {
                     "value": "Значение 1"
                 }
             ],
-            rating: 4.86,
         },
         {
             id: 6,
@@ -140,7 +135,6 @@ export const data = {
                     "value": "Значение 1"
                 }
             ],
-            rating: 4.86,
         },
         {
             id: 7,
@@ -160,7 +154,6 @@ export const data = {
                     "value": "Значение 1"
                 }
             ],
-            rating: 4.86,
         },
         {
             id: 8,
@@ -180,7 +173,6 @@ export const data = {
                     "value": "Значение 1"
                 }
             ],
-            rating: 4.86,
         },
         {
             id: 9,
@@ -204,7 +196,6 @@ export const data = {
                     "value": "Значение 2"
                 }
             ],
-            rating: 4.86,
         },
         {
             id: 10,
@@ -228,7 +219,6 @@ export const data = {
                     "value": "Значение 2"
                 }
             ],
-            rating: 4.86,
         },
     ],
 };

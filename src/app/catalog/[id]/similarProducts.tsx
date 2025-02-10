@@ -8,33 +8,6 @@ import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 
-// Функция для отображения звезд
-const RatingStars = ({ rating }: { rating: number }) => {
-  const fullStars = Math.floor(rating);
-  const halfStar = rating % 1 >= 0.5 ? 1 : 0;
-  const emptyStars = 5 - fullStars - halfStar;
-
-  return (
-    <div className="flex">
-      {Array(fullStars)
-        .fill(0)
-        .map((_, index) => (
-          <span key={index} className="text-yellow-500">
-            ★
-          </span>
-        ))}
-      {halfStar === 1 && <span className="text-yellow-500">☆</span>}
-      {Array(emptyStars)
-        .fill(0)
-        .map((_, index) => (
-          <span key={index} className="text-gray-400">
-            ☆
-          </span>
-        ))}
-    </div>
-  );
-};
-
 export default function SimilarProducts({ products, currentProductId }) {
   const currentProduct = products.find(
     (product) => product.id === currentProductId
@@ -94,9 +67,6 @@ export default function SimilarProducts({ products, currentProductId }) {
                       <h3 className="text-xs sm:text-sm font-semibold text-center text-gray-900 mt-2">
                         {product.productName}
                       </h3>
-                      <div className="flex justify-center mt-1">
-                        <RatingStars rating={product.rating} />
-                      </div>
                       <div className="flex justify-center mt-2">
                         <span className="bg-yellow-400 text-gray-900 text-xs sm:text-sm font-bold px-2 py-1 rounded">
                           {product.price} {product.currency} / шт.

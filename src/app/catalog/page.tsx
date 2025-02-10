@@ -9,63 +9,6 @@ import { Button } from "@mui/material";
 import Filters from "./filters"; // Import Filters component
 import { manufacturers, productTypes } from "@/db/schema/products";
 
-// Компонент для отображения звезд
-const RatingStars = ({ rating }: { rating: number }) => {
-  const fullStars = Math.floor(rating); // Количество полных звезд
-  const halfStar = rating % 1 >= 0.5 ? 1 : 0; // Полузвезда, если дробная часть >= 0.5
-  const emptyStars = 5 - fullStars - halfStar; // Пустые звезды
-
-  return (
-    <div className="flex">
-      {/* Полные звезды */}
-      {Array(fullStars)
-        .fill(0)
-        .map((_, index) => (
-          <svg
-            key={`full-${index}`}
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            fill="currentColor"
-            className="text-yellow-500"
-            viewBox="0 0 16 16"
-          >
-            <path d="M8 12.146l-3.6 2.4 1.2-4.4-3.6-2.8h4.4l1.2-4.4 1.2 4.4h4.4l-3.6 2.8 1.2 4.4-3.6-2.4z" />
-          </svg>
-        ))}
-      {/* Полузвезда */}
-      {halfStar === 1 && (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          fill="currentColor"
-          className="text-yellow-500"
-          viewBox="0 0 16 16"
-        >
-          <path d="M8 12.146l-3.6 2.4 1.2-4.4-3.6-2.8h4.4l1.2-4.4 1.2 4.4h4.4l-3.6 2.8 1.2 4.4-3.6-2.4z" />
-        </svg>
-      )}
-      {/* Пустые звезды */}
-      {Array(emptyStars)
-        .fill(0)
-        .map((_, index) => (
-          <svg
-            key={`empty-${index}`}
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            fill="currentColor"
-            className="text-gray-400"
-            viewBox="0 0 16 16"
-          >
-            <path d="M8 12.146l-3.6 2.4 1.2-4.4-3.6-2.8h4.4l1.2-4.4 1.2 4.4h4.4l-3.6 2.8 1.2 4.4-3.6-2.4z" />
-          </svg>
-        ))}
-    </div>
-  );
-};
-
 export default function Catalog() {
   const { catalogSearchQuery, setCatalogSearchQuery } = useSearch(); // Getting search query from context
 
@@ -255,10 +198,6 @@ export default function Catalog() {
                     <p className="mt-2 font-light text-xl">
                       {product.amount > 0 ? "В наличии" : "Нет в наличии"}
                     </p>
-
-                    {/* Отображаем рейтинг в виде звезд */}
-                    <RatingStars rating={product.rating || 0} />
-
                     <Button className="text-black bg-yellow font-regular text-xl normal-case mt-4 w-24 h-16 rounded-lg leading-6">
                       {product.price ? product.price : "Уточняйте"} <br />
                       {product.price ? "руб./" + product.unitOfMeasure : ""}
