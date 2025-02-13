@@ -1,15 +1,16 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { data } from "@/app/utils/data"; // Импорт данных
+import { useState, useEffect } from "react"; // Добавляем useState и useEffect
+import { supabase } from "@/lib/supabaseClient"; // Импортируем Supabase
 
 export default function Breadcrumbs() {
   const pathname = usePathname();
   const BreadcrumbsArray = pathname.split("/").filter(Boolean); // Убираем пустые элементы
 
-  if (pathname === "/") {
-    return null;
-  }
+  const [productName, setProductName] = useState<string | null>(null); // Состояние для названия продукта
+  const [loading, setLoading] = useState<boolean>(false); // Состояние загрузки
+  const [error, setError] = useState<string | null>(null); // Состояние ошибки
 
   // Определяем пользовательские названия для конкретных страниц
   const customTitles: Record<string, string> = {
@@ -21,8 +22,45 @@ export default function Breadcrumbs() {
   // Получаем последний элемент (ID продукта, если есть)
   const lastItem = BreadcrumbsArray[BreadcrumbsArray.length - 1];
 
-  // Ищем продукт по ID (если это страница продукта)
-  const product = data.products.find((prod) => String(prod.id) === lastItem);
+  // Запрос к Supabase для получения названия продукта
+  useEffect(() => {
+    const fetchProductName = async () => {
+      if (!lastItem || isNaN(Number(lastItem))) return; // Проверяем, что lastItem — это число (ID продукта)
+
+      setLoading(true);
+      try {
+        const { data: productData, error: productError } = await supabase
+          .from("products")
+          .select("product_name")
+          .eq("id", Number(lastItem))
+          .single();
+
+        if (productError) {
+          throw productError;
+        }
+
+        setProductName(productData.product_name); // Устанавливаем название продукта
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProductName();
+  }, [lastItem]); // Зависимость от lastItem
+
+  if (pathname === "/") {
+    return null; // Ранний возврат после всех хуков
+  }
+
+  if (loading) {
+    return <div>Загрузка...</div>;
+  }
+
+  if (error) {
+    return <div>Ошибка: {error}</div>;
+  }
 
   return (
     <div className="pt-6 pb-5 mx-auto sm:ml-4 pl-4 pr-4 sm:mr-4 lg:ml-32 lg:mr-32 mt-4 mb-4 shadow-xl rounded-lg px-4 bg-white">
@@ -45,8 +83,8 @@ export default function Breadcrumbs() {
           // Проверяем, если элемент — специальная страница (например, "about" или "catalog")
           const displayName =
             customTitles[item] ||
-            (index === BreadcrumbsArray.length - 1 && product
-              ? product.productName
+            (index === BreadcrumbsArray.length - 1 && productName
+              ? productName // Используем название продукта, если оно есть
               : item);
 
           return (

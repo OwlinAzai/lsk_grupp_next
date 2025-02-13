@@ -1,8 +1,8 @@
 import { useRef, useEffect } from "react";
 import NextLink from "next/link";
-import { Button, Link } from "@mui/material";
-import { usePathname } from "next/navigation"; // Импортируем usePathname
-import CloseIcon from "@mui/icons-material/Close"; // Импортируем иконку крестика
+import { Link } from "@mui/material";
+import { usePathname } from "next/navigation";
+import CloseIcon from "@mui/icons-material/Close";
 
 interface MenuProps {
   isMenuOpen: boolean;
@@ -11,9 +11,8 @@ interface MenuProps {
 
 export default function Menu({ isMenuOpen, setMenuOpen }: MenuProps) {
   const menuRef = useRef(null);
-  const pathname = usePathname(); // Получаем текущий путь
+  const pathname = usePathname();
 
-  // Закрытие меню при клике вне его области
   useEffect(() => {
     function handleClickOutside(event) {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -29,13 +28,14 @@ export default function Menu({ isMenuOpen, setMenuOpen }: MenuProps) {
 
   return (
     <>
-      {/* Затемнение фона и меню */}
+      {/* Затемнение фона */}
       <div
         className={`fixed inset-0 bg-black bg-opacity-50 transition-opacity duration-300 ${
           isMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
-        style={{ zIndex: 999 }} // Устанавливаем z-index меньше, чем у кнопки
+        style={{ zIndex: 999 }}
       >
+        {/* Меню */}
         <div
           ref={menuRef}
           className={`fixed inset-y-0 right-0 w-80 bg-white shadow-xl transform transition-transform duration-300 ${
@@ -48,8 +48,7 @@ export default function Menu({ isMenuOpen, setMenuOpen }: MenuProps) {
             className="absolute top-2 right-2 p-2 text-gray-600 hover:text-gray-900 rounded-full bg-red-500 shadow-md hover:shadow-lg transition-all duration-200"
             aria-label="Закрыть меню"
           >
-            <CloseIcon className="text-2xl text-white" />{" "}
-            {/* Иконка крестика */}
+            <CloseIcon className="text-2xl text-white" />
           </button>
 
           {/* Контент меню */}

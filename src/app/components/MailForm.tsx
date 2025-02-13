@@ -59,7 +59,6 @@ const Contact: FC = () => {
     setValue("cart", JSON.stringify(updatedCart));
   };
 
-  // Handler for quantity change
   const handleQuantityChange = (index: number, value: string) => {
     const updatedCart = [...cart];
     const newQuantity = Math.max(1, Number(value)); // Ensure the quantity is at least 1
@@ -194,69 +193,76 @@ const Contact: FC = () => {
             value={JSON.stringify(cart) || ""}
             {...register("cart", { required: true })}
           ></textarea>
-
           {cart.length > 0 && (
             <div>
               <h2 className="text-xl font-sans mt-4">Your Order:</h2>
               <div className="grid gap-4 mt-4">
-                {cart.map((item, index) => (
-                  <div
-                    key={index}
-                    className="bg-white p-6 rounded-lg drop-shadow-2xl"
-                  >
-                    <h3 className="text-xl font-sans">{item.productName}</h3>
-                    <div className="flex flex-row justify-between">
-                      <Image
-                        src={item.imageURL}
-                        alt={item.productName}
-                        width={100}
-                        height={100}
-                        className="mt-2 mb-4"
-                      />
-                      <p className="text-sm font-sans text-gray-600">
-                        {item.description}
+                {cart.map(
+                  (
+                    item,
+                    index // <-- Fixed: Added curly braces
+                  ) => (
+                    <div
+                      key={index}
+                      className="bg-white p-6 rounded-lg drop-shadow-2xl"
+                    >
+                      <h3 className="text-xl font-sans">{item.productName}</h3>
+                      <div className="flex flex-row justify-between">
+                        {item.imageURL && (
+                          <Image
+                            src={item.imageURL}
+                            alt={item.productName || "Product Image"}
+                            width={100}
+                            height={100}
+                            className="mt-2 mb-4"
+                          />
+                        )}
+                        <p className="text-sm font-sans text-gray-600">
+                          {item.description}
+                        </p>
+                      </div>
+                      <p className="font-semibold font-sans">
+                        Price: {item?.price || "Please check"}{" "}
+                        {item?.currency || ""}
                       </p>
-                    </div>
-                    <p className="font-semibold font-sans">
-                      Price: {item?.price || "Please check"}{" "}
-                      {item?.currency || ""}
-                    </p>
-                    <div className="flex flex-row justify-between">
-                      <div className="flex items-center mt-2">
+                      {/* Quantity controls */}
+                      <div className="flex flex-row justify-between">
+                        <div className="flex items-center mt-2">
+                          <button
+                            type="button"
+                            className="text-white bg-orange-500 hover:bg-orange-600 rounded-md px-3 py-1"
+                            onClick={() => updateQuantity(index, -1)}
+                          >
+                            -
+                          </button>
+                          <input
+                            type="number"
+                            value={item.quantity}
+                            onChange={(e) =>
+                              handleQuantityChange(index, e.target.value)
+                            }
+                            className="mx-4 w-10 text-center border-2 border-zinc-500 rounded-md appearance-none"
+                            min="1"
+                          />
+                          <button
+                            type="button"
+                            className="text-white bg-orange-500 hover:bg-orange-600 rounded-md px-3 py-1"
+                            onClick={() => updateQuantity(index, 1)}
+                          >
+                            +
+                          </button>
+                        </div>
                         <button
                           type="button"
-                          className="text-white bg-orange-500 hover:bg-orange-600 rounded-md px-3 py-1"
-                          onClick={() => updateQuantity(index, -1)}
+                          className="mt-3 bg-red-500 rounded-md px-3 py-1 text-white hover:bg-red-600"
+                          onClick={() => removeItemFromCart(index)}
                         >
-                          -
-                        </button>
-                        <input
-                          type="number"
-                          value={item.quantity}
-                          onChange={(e) =>
-                            handleQuantityChange(index, e.target.value)
-                          }
-                          className="mx-4 w-10 text-center border-2 border-zinc-500 rounded-md appearance-none"
-                          min="1"
-                        />
-                        <button
-                          type="button"
-                          className="text-white bg-orange-500 hover:bg-orange-600 rounded-md px-3 py-1"
-                          onClick={() => updateQuantity(index, 1)}
-                        >
-                          +
+                          Remove
                         </button>
                       </div>
-                      <button
-                        type="button"
-                        className="mt-3 bg-red-500 rounded-md px-3 py-1 text-white hover:bg-red-600"
-                        onClick={() => removeItemFromCart(index)}
-                      >
-                        Remove
-                      </button>
                     </div>
-                  </div>
-                ))}
+                  )
+                )}
               </div>
             </div>
           )}

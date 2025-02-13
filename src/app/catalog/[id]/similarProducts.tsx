@@ -11,7 +11,7 @@ export default function SimilarProducts({ products, currentProductId }) {
   const currentProduct = products.find(
     (product) => product.id === currentProductId
   );
-  if (!currentProduct) return <div>Товар не найден</div>;
+  if (!currentProduct) return <div>Похожий товар не найден</div>;
 
   const filteredProducts = products.filter(
     (product) =>
@@ -26,7 +26,9 @@ export default function SimilarProducts({ products, currentProductId }) {
           Похожие товары
         </h2>
         {filteredProducts.length === 0 ? (
-          <p className="text-center text-orange-700">Похожие товары не найдены!</p>
+          <p className="text-center text-orange-700">
+            Похожие товары не найдены!
+          </p>
         ) : (
           <div className="relative w-full flex items-center">
             {/* Кнопка влево */}
@@ -47,10 +49,18 @@ export default function SimilarProducts({ products, currentProductId }) {
                 loop={true}
                 centeredSlides={true} // Центрирование карточек
                 breakpoints={{
-                // Хуй знает как, но я настроил. НЕ ТРОГАТЬ!!!
+                  // Хуй знает как, но я настроил. НЕ ТРОГАТЬ!!!
                   480: { slidesPerView: 1.5, spaceBetween: 8 }, // Телефоны
-                  640: { slidesPerView: 2.2, spaceBetween: 8, centeredSlides: false },
-                  700: { slidesPerView: 2.7, spaceBetween: 1, centeredSlides: false },
+                  640: {
+                    slidesPerView: 2.2,
+                    spaceBetween: 8,
+                    centeredSlides: false,
+                  },
+                  700: {
+                    slidesPerView: 2.7,
+                    spaceBetween: 1,
+                    centeredSlides: false,
+                  },
                   768: { slidesPerView: 3, spaceBetween: 8 },
                   830: { slidesPerView: 3, spaceBetween: 8 },
                   960: { slidesPerView: 4, spaceBetween: 8 },
@@ -98,4 +108,3 @@ export default function SimilarProducts({ products, currentProductId }) {
     </div>
   );
 }
-

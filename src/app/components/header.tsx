@@ -4,37 +4,149 @@ import Image from "next/image";
 import NextLink from "next/link";
 import { Button, Link } from "@mui/material";
 import { useSearch } from "../context/searchContext";
-import { data } from "../utils/data";
-import MenuIcon from "@mui/icons-material/Menu";
+import { supabase } from "@/lib/supabaseClient";
 import CloseIcon from "@mui/icons-material/Close";
+import MenuIcon from "@mui/icons-material/Menu";
 import Menu from "./menu";
+
+// Вынесенный компонент для мобильного поискового попапа
+const MobileSearchPopup = ({
+  isOpen,
+  onClose,
+  searchInputRef,
+  headerSearchQuery,
+  handleSearchChange,
+  clearSearchInput,
+  filteredProducts,
+}) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50">
+      <div className="bg-white w-full h-full rounded-tl-lg rounded-tr-lg relative">
+        {/* Close Button */}
+        <button
+          className="absolute top-4 right-4 p-3 text-gray-600 hover:text-gray-900 rounded-full bg-red-700 shadow-md hover:shadow-lg transition-all duration-300 text-white"
+          onClick={onClose}
+        >
+          <CloseIcon />
+        </button>
+
+        {/* Search Bar */}
+        <div className="px-4 pt-4">
+          <input
+            ref={searchInputRef}
+            type="text"
+            placeholder="Поиск товаров..."
+            className="w-full h-12 rounded-full bg-gray-100 pl-4 pr-12 text-black text-base focus:outline-none focus:ring-2 focus:ring-orange-500"
+            value={headerSearchQuery}
+            onChange={handleSearchChange}
+          />
+          {headerSearchQuery && (
+            <button
+              onClick={clearSearchInput}
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+            >
+              <CloseIcon className="w-5 h-5" />
+            </button>
+          )}
+        </div>
+
+        {/* Search Results */}
+        <div className="mt-4 max-h-[60vh] overflow-auto">
+          {filteredProducts.length > 0 ? (
+            filteredProducts.map((product) => (
+              <NextLink key={product.id} href={`/catalog/${product.id}`}>
+                <div className="p-4 bg-white shadow-md rounded-md mb-3 ml-2 mr-2 hover:bg-[#fdf3e1] cursor-pointer flex items-center space-x-3">
+                  <Image
+                    src={product.image_URL}
+                    alt={product.product_name}
+                    width={40}
+                    height={40}
+                    className="rounded-lg"
+                  />
+                  <div>
+                    <p className="text-lg font-medium">
+                      {product.product_name}
+                    </p>
+                    <p className="text-sm text-gray-500">{product.price}</p>
+                  </div>
+                </div>
+              </NextLink>
+            ))
+          ) : (
+            <div className="p-4 text-center text-gray-500">
+              Ничего не найдено
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const Header = () => {
   const { headerSearchQuery, setHeaderSearchQuery } = useSearch();
+  const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [isSearchPopupOpen, setIsSearchPopupOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const searchInputRef = useRef(null);
-  const dropdownRef = useRef(null);
-  const [searchHistory, setSearchHistory] = useState([]);
 
   useEffect(() => {
-    const history = JSON.parse(localStorage.getItem("searchHistory")) || [];
-    setSearchHistory(history);
+    const fetchProducts = async () => {
+      try {
+        const { data: products, error } = await supabase
+          .from("products")
+          .select("*");
+
+        if (error) {
+          throw error;
+        }
+
+        const productsWithPrices = await Promise.all(
+          products.map(async (product) => {
+            const { data: priceData, error: priceError } = await supabase
+              .from("price_history")
+              .select("price")
+              .eq("product_id", product.id)
+              .order("period", { ascending: false })
+              .limit(1)
+              .maybeSingle();
+
+            if (priceError) {
+              console.error(
+                "Error fetching price for product:",
+                product.id,
+                priceError
+              );
+              return { ...product, price: "Цена не найдена" };
+            }
+
+            return { ...product, price: priceData?.price || "Цена не найдена" };
+          })
+        );
+
+        setProducts(productsWithPrices);
+        setFilteredProducts(productsWithPrices);
+      } catch (error) {
+        console.error("Error fetching products", error);
+      }
+    };
+
+    fetchProducts();
   }, []);
 
   const handleSearchChange = (e) => {
     const query = e.target.value;
     setHeaderSearchQuery(query);
-    setFilteredProducts(
-      query
-        ? data.products.filter(
-            (product) =>
-              product.productName.toLowerCase().includes(query.toLowerCase()) ||
-              product.description.toLowerCase().includes(query.toLowerCase())
-          )
-        : []
+
+    const filtered = products.filter(
+      (product) =>
+        product.product_name.toLowerCase().includes(query.toLowerCase()) ||
+        product.description.toLowerCase().includes(query.toLowerCase())
     );
+    setFilteredProducts(filtered);
   };
 
   const clearSearchInput = () => {
@@ -43,6 +155,7 @@ const Header = () => {
       searchInputRef.current.focus();
     }
     setHeaderSearchQuery("");
+    setFilteredProducts(products);
   };
 
   return (
@@ -51,7 +164,7 @@ const Header = () => {
         <Image src="/Logo.png" alt="Logo" width={100} height={50} priority />
       </Link>
 
-      {/* Поле поиска с кнопкой очистки */}
+      {/* Desktop Search Bar */}
       <div className="hidden lg:flex items-center w-1/2 relative">
         <div className="w-full relative">
           <input
@@ -65,33 +178,32 @@ const Header = () => {
           {headerSearchQuery && (
             <button
               onClick={clearSearchInput}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 p-2 text-white bg-red-500 rounded-full hover:bg-red-700 shadow-md hover:shadow-lg transition-all duration-300"
             >
               <CloseIcon className="w-5 h-5" />
             </button>
           )}
         </div>
         {headerSearchQuery && (
-          <div
-            ref={dropdownRef}
-            className="absolute top-full left-0 w-full bg-white shadow-lg mt-1 rounded-lg max-h-60 overflow-auto z-10"
-          >
+          <div className="absolute top-full left-0 w-full bg-white shadow-lg mt-1 rounded-lg max-h-60 overflow-auto z-10">
             {filteredProducts.length > 0 ? (
               filteredProducts.map((product) => (
                 <NextLink key={product.id} href={`/catalog/${product.id}`}>
                   <div className="p-2 hover:bg-[#fdf3e1] cursor-pointer flex items-center space-x-3 border-b last:border-b-0">
                     <Image
-                      src={product.imageURL}
-                      alt={product.productName}
+                      src={product.image_URL}
+                      alt={product.product_name}
                       width={40}
                       height={40}
                       className="rounded-lg"
                     />
                     <div className="flex flex-col">
-                      <p className="text-xl font-medium">{product.productName}</p>
+                      <p className="text-xl font-medium">
+                        {product.product_name}
+                      </p>
                       <p className="text-base text-gray-500">
                         {product.amount > 0
-                          ? `${product.price} ${product.currency}`
+                          ? `${product.price}`
                           : "Нет в наличии"}
                       </p>
                     </div>
@@ -105,7 +217,7 @@ const Header = () => {
         )}
       </div>
 
-      {/* Мобильное меню */}
+      {/* Mobile Menu */}
       <div className="lg:hidden">
         <Button onClick={() => setIsSearchPopupOpen(true)}>
           <svg
@@ -125,7 +237,7 @@ const Header = () => {
         </Button>
       </div>
 
-      {/* Десктопное меню */}
+      {/* Desktop Menu */}
       <div className="hidden lg:flex items-center space-x-6">
         <Link
           component={NextLink}
@@ -148,62 +260,23 @@ const Header = () => {
         </Link>
       </div>
 
-      {/* Мобильное меню (компонент Menu) */}
+      {/* Mobile Menu Component */}
       <Menu isMenuOpen={isMenuOpen} setMenuOpen={setIsMenuOpen} />
 
-      {/* Попап поиска для мобильных устройств */}
+      {/* Conditionally Render Mobile Search Popup */}
       {isSearchPopupOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50">
-          <div className="bg-zinc-200 p-6 rounded-lg w-11/12 max-w-md h-96 relative">
-            <button
-              className="absolute top-2 right-2 p-2 text-gray-600 hover:text-gray-900 rounded-full bg-red-500 shadow-md hover:shadow-lg transition-all duration-200 text-white"
-              onClick={() => setIsSearchPopupOpen(false)}
-            >
-              <CloseIcon/>
-            </button>
-            <div className="shadow-md shadow-stone-500 rounded-full ">
-              <input
-                ref={searchInputRef}
-                type="text"
-                placeholder="Найти товар..."
-                className="w-full h-10 rounded-full bg-gray-100 pl-4 pr-8 py-2 text-black text-base focus-visible:border-none"
-                value={headerSearchQuery}
-                onChange={handleSearchChange}
-              />
-            </div>
-            <div className="mt-4 max-h-72 overflow-auto">
-              {filteredProducts.length > 0 ? (
-                filteredProducts.map((product) => (
-                  <NextLink key={product.id} href={`/catalog/${product.id}`}>
-                    <div className="p-2 bg-white shadow-xl rounded-md mb-2 hover:bg-[#fdf3e1] cursor-pointer flex items-center space-x-3 border-b last:border-b-0">
-                      <Image
-                        src={product.imageURL}
-                        alt={product.productName}
-                        width={50}
-                        height={50}
-                        className="rounded-lg"
-                      />
-                      <div className="flex flex-col">
-                        <p className="text-xl font-medium">{product.productName}</p>
-                        <p className="text-base text-gray-500">
-                          {product.amount > 0
-                            ? `${product.price} ${product.currency}`
-                            : "Нет в наличии"}
-                        </p>
-                      </div>
-                    </div>
-                  </NextLink>
-                ))
-              ) : (
-                <div className="p-4 text-gray-500">Ничего не найдено</div>
-              )}
-            </div>
-          </div>
-        </div>
+        <MobileSearchPopup
+          isOpen={isSearchPopupOpen}
+          onClose={() => setIsSearchPopupOpen(false)}
+          searchInputRef={searchInputRef}
+          headerSearchQuery={headerSearchQuery}
+          handleSearchChange={handleSearchChange}
+          clearSearchInput={clearSearchInput}
+          filteredProducts={filteredProducts}
+        />
       )}
     </div>
   );
 };
 
 export default Header;
-

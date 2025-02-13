@@ -1,175 +1,127 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { data } from "../utils/data"; // Импорт данных
-
-// Создаем уникальные списки категорий
-const productTypes = [
-  ...new Set(data.products.map((product) => product.productType)),
-];
-
-// Функция для получения количества товаров по каждому бренду
-const getBrandCounts = (products) => {
-  const counts = {};
-  products.forEach((product) => {
-    counts[product.manufacturer] = (counts[product.manufacturer] || 0) + 1;
-  });
-  return counts;
-};
-
-// Функция для получения брендов, которые есть в наличии
-const getAvailableBrands = (products) => {
-  const availableBrands = new Set();
-  products.forEach((product) => {
-    if (product.amount > 0) {
-      // Проверяем, что товар есть в наличии
-      availableBrands.add(product.manufacturer);
-    }
-  });
-  return availableBrands;
-};
+import { supabase } from "../../lib/supabaseClient.js";
 
 export default function Filters({ onFilterChange }) {
-  const [selectedType, setSelectedType] = useState(""); // Категория
-  const [selectedManufacturers, setSelectedManufacturers] = useState([]); // Массив для нескольких брендов
-  const [minPrice, setMinPrice] = useState(""); // Минимальная цена
-  const [maxPrice, setMaxPrice] = useState(""); // Максимальная цена
-  const [availability, setAvailability] = useState("all"); // Наличие на складе
+  // Состояния компонента
+  const [selectedType, setSelectedType] = useState("");
+  const [selectedManufacturers, setSelectedManufacturers] = useState([]);
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+  const [availability, setAvailability] = useState("all");
+  const [productTypes, setProductTypes] = useState([]);
+  const [manufacturers, setManufacturers] = useState([]);
 
-  // Функция для получения товаров, относящихся к выбранной категории
-  const getProductsByCategory = (productType) => {
-    if (!productType) return data.products; // Если категория не выбрана, возвращаем все товары
-    return data.products.filter(
-      (product) => product.productType === productType
-    );
-  };
-
-  // Получаем список товаров по выбранной категории
-  const filteredProducts = getProductsByCategory(selectedType);
-
-  // Получаем бренды, которые есть в наличии, если выбран параметр "В наличии"
-  const availableBrands =
-    availability === "available"
-      ? getAvailableBrands(filteredProducts)
-      : new Set(Object.keys(getBrandCounts(filteredProducts)));
-
-  // Получаем количество товаров по брендам
-  const brandCounts = getBrandCounts(filteredProducts);
-
-  // Функция для восстановления состояния фильтров из localStorage
-  const loadFiltersFromStorage = () => {
-    const savedFilters = JSON.parse(localStorage.getItem("filters") || "{}");
-    if (savedFilters) {
-      setSelectedType(savedFilters.type || "");
-      setSelectedManufacturers(savedFilters.manufacturers || []); // Восстанавливаем выбранные бренды
-      setMinPrice(savedFilters.minPrice || "");
-      setMaxPrice(savedFilters.maxPrice || "");
-      setAvailability(savedFilters.availability || "all");
-    }
-  };
-
-  // Восстановление фильтров при монтировании компонента
+  // Загрузка данных
   useEffect(() => {
-    loadFiltersFromStorage();
+    const fetchData = async () => {
+      // Загрузка категорий
+      const { data: typesData } = await supabase
+        .from("product_types")
+        .select("*");
+      setProductTypes(typesData || []);
+
+      // Загрузка производителей
+      const { data: manufacturersData } = await supabase
+        .from("manufactures")
+        .select("*");
+      setManufacturers(manufacturersData || []);
+    };
+    fetchData();
   }, []);
 
-  // Функция для сохранения состояния фильтров в localStorage
-  const saveFiltersToStorage = (filters) => {
-    localStorage.setItem("filters", JSON.stringify(filters));
-  };
-
   // Обработчик изменения категории
-  const handleTypeChange = (event) => {
-    const newType = event.target.value;
-    setSelectedType(newType);
-    setSelectedManufacturers([]); // Сбрасываем выбранные бренды при изменении категории
-    const filters = {
-      productTypes: newType,
-      manufacturers: [], // Сбрасываем бренды
+  const handleTypeChange = async (event) => {
+    const selectedCategoryId = event.target.value;
+    setSelectedType(selectedCategoryId);
+    setSelectedManufacturers([]);
+
+    // Получаем все дочерние категории
+    const { data: childCategories } = await supabase
+      .from("product_types")
+      .select("id")
+      .eq("entry_parents", selectedCategoryId);
+
+    // Формируем массив ID для фильтрации
+    const categoryIds = childCategories
+      ? [selectedCategoryId, ...childCategories.map((c) => c.id)]
+      : [selectedCategoryId];
+
+    onFilterChange({
+      categoryIds,
+      manufacturers: [],
       minPrice,
       maxPrice,
       availability,
-    };
-    onFilterChange(filters);
-    saveFiltersToStorage(filters);
+    });
   };
 
-  // Обработчик изменения выбранных брендов
+  // Обработчик изменения производителей
   const handleManufacturerChange = (event) => {
-    const manufacturer = event.target.value;
+    const manufacturerId = event.target.value;
     const isChecked = event.target.checked;
 
-    let newSelectedManufacturers;
-    if (isChecked) {
-      newSelectedManufacturers = [...selectedManufacturers, manufacturer];
-    } else {
-      newSelectedManufacturers = selectedManufacturers.filter(
-        (selectedManufacturer) => selectedManufacturer !== manufacturer
-      );
-    }
+    // Приводим manufacturerId к строке
+    const id = String(manufacturerId);
 
-    setSelectedManufacturers(newSelectedManufacturers);
-    const filters = {
-      productTypes: selectedType,
-      manufacturers: newSelectedManufacturers, // Обновляем массив брендов
+    const newManufacturers = isChecked
+      ? [...selectedManufacturers, id]
+      : selectedManufacturers.filter((selectedId) => selectedId !== id);
+
+    setSelectedManufacturers(newManufacturers);
+    onFilterChange({
+      categoryIds: selectedType ? [selectedType] : [],
+      manufacturers: newManufacturers,
       minPrice,
       maxPrice,
       availability,
-    };
-    onFilterChange(filters);
-    saveFiltersToStorage(filters);
+    });
   };
 
-  // Обработчик изменения минимальной цены
+  // Обработчики изменения цены
   const handleMinPriceChange = (event) => {
-    const newMinPrice = event.target.value;
-    setMinPrice(newMinPrice);
-    const filters = {
-      productTypes: selectedType,
+    const value = event.target.value;
+    setMinPrice(value);
+    onFilterChange({
+      categoryIds: selectedType ? [selectedType] : [],
       manufacturers: selectedManufacturers,
-      minPrice: newMinPrice,
+      minPrice: value,
       maxPrice,
       availability,
-    };
-    onFilterChange(filters);
-    saveFiltersToStorage(filters);
+    });
   };
 
-  // Обработчик изменения максимальной цены
   const handleMaxPriceChange = (event) => {
-    const newMaxPrice = event.target.value;
-    setMaxPrice(newMaxPrice);
-    const filters = {
-      productTypes: selectedType,
+    const value = event.target.value;
+    setMaxPrice(value);
+    onFilterChange({
+      categoryIds: selectedType ? [selectedType] : [],
       manufacturers: selectedManufacturers,
       minPrice,
-      maxPrice: newMaxPrice,
+      maxPrice: value,
       availability,
-    };
-    onFilterChange(filters);
-    saveFiltersToStorage(filters);
+    });
   };
 
   // Обработчик изменения наличия
   const handleAvailabilityChange = (event) => {
-    const newAvailability = event.target.value;
-    setAvailability(newAvailability);
-    const filters = {
-      productTypes: selectedType,
+    const value = event.target.value;
+    setAvailability(value);
+    onFilterChange({
+      categoryIds: selectedType ? [selectedType] : [],
       manufacturers: selectedManufacturers,
       minPrice,
       maxPrice,
-      availability: newAvailability,
-    };
-    onFilterChange(filters);
-    saveFiltersToStorage(filters);
+      availability: value,
+    });
   };
 
   return (
     <div className="pt-6 pb-5 mx-auto sm:ml-4 pl-4 pr-4 sm:mr-4 lg:ml-32 lg:mr-32 mt-4 mb-4 shadow-xl rounded-lg px-4 bg-white">
       <h1 className="text-4xl font-regular mb-3">Фильтры</h1>
 
-      {/* Фильтр по категории */}
+      {/* Категория */}
       <div className="mb-4">
         <label className="block font-regular text-xl mb-2">Категория</label>
         <select
@@ -179,21 +131,21 @@ export default function Filters({ onFilterChange }) {
         >
           <option value="">Все</option>
           {productTypes.map((type) => (
-            <option key={type} value={type}>
-              {type}
+            <option key={type.id} value={type.id}>
+              {type.name}
             </option>
           ))}
         </select>
       </div>
 
-      {/* Фильтр по цене */}
+      {/* Цена */}
       <div className="mb-4">
         <label className="block font-regular text-xl mb-2">Цена</label>
         <div className="flex sm:space-x-2 lg:space-x-4">
           <input
             type="number"
             placeholder="От"
-            className="w-full sm:w-1/2 p-2 outline-none border-2 border-zinc-500 focus:border-orange-400 rounded-lg"
+            className="w-full sm:w-1/2 p-2 mr-2 outline-none border-2 border-zinc-500 focus:border-orange-400 rounded-lg"
             value={minPrice}
             onChange={handleMinPriceChange}
           />
@@ -207,35 +159,31 @@ export default function Filters({ onFilterChange }) {
         </div>
       </div>
 
-      {/* Фильтр по бренду (несколько чекбоксов) */}
+      {/* Производители */}
       <div className="mb-4">
-        <label className="block font-regular text-xl mb-2">Бренд</label>
+        <label className="block font-regular text-xl mb-2">Производитель</label>
         <div className="flex flex-col space-y-2">
-          {Object.keys(brandCounts)
-            .filter(
-              (manufacturer) =>
-                availability === "all" || availableBrands.has(manufacturer)
-            ) // Фильтруем бренды, если "В наличии"
-            .map((manufacturer) => (
-              <div key={manufacturer} className="flex items-center">
-                <input
-                  type="checkbox"
-                  id={manufacturer}
-                  value={manufacturer}
-                  checked={selectedManufacturers.includes(manufacturer)} // Проверка, выбран ли бренд
-                  onChange={handleManufacturerChange}
-                  className="mr-2"
-                />
-                <label htmlFor={manufacturer} className="font-light text-xl">
-                  {manufacturer} ({brandCounts[manufacturer]}){" "}
-                  {/* Отображаем количество */}
-                </label>
-              </div>
-            ))}
+          {manufacturers.map((manufacturer) => (
+            <div key={manufacturer.id} className="flex items-center">
+              <input
+                type="checkbox"
+                id={manufacturer.id}
+                value={manufacturer.id}
+                checked={selectedManufacturers.includes(
+                  String(manufacturer.id)
+                )} // Приводим к строке
+                onChange={handleManufacturerChange}
+                className="mr-2"
+              />
+              <label htmlFor={manufacturer.id} className="font-light text-xl">
+                {manufacturer.full_name}
+              </label>
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* Фильтр по наличию */}
+      {/* Availability filter */}
       <div className="mb-4">
         <label className="block font-regular text-xl mb-2">
           Наличие на складе

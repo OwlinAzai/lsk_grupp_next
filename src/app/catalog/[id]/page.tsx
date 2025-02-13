@@ -1,56 +1,173 @@
 "use client";
-
+import React from "react";
 import { Button } from "@mui/material";
-import Menu from "./../../components/menu";
 import NextLink from "next/link";
 import Image from "next/image";
-import { data } from "./../../utils/data";
-import { use } from "react";
+import { useState, useEffect } from "react";
 import SimilarProducts from "./similarProducts";
+import { supabase } from "@/lib/supabaseClient";
 
-export default function Page({ params }: { params: Promise<{ id: string }> }) {
-  const unwrappedParams = use(params);
-  const productId = Number(unwrappedParams.id);
+export default function Page({ params }: { params: { id: string } }) {
+  // Unwrap the params with React.use()
+  const { id } = React.use(params);
 
-  const product = data.products.find((item) => item.id === productId);
+  const productId = Number(id);
 
-  if (!product) {
-    return (
-      <div className="pt-[22px] pb-[22px] mx-4 sm:mx-[14rem] shadow-xl rounded-lg px-4 bg-white">
-        <h1>Продукт не найден</h1>
-        <p>Извините, этот продукт не существует.</p>
-      </div>
-    );
-  }
+  const [product, setProduct] = useState(null);
+  const [price, setPrice] = useState(null);
+  const [uom, setUOM] = useState(null);
+  const [manufacturer, setManufacturer] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [similarProducts, setSimilarProducts] = useState([]);
 
-  const handleAddToCart = () => {
-    if (typeof window !== "undefined") {
-      const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
-      const existingProductIndex = existingCart.findIndex(
-        (item) => item.id === product.id
-      );
+  const fetchUOM = async () => {
+    try {
+      if (product && product.uom_id) {
+        const { data: uomData, error: uomError } = await supabase
+          .from("unit_of_measures")
+          .select("full_name")
+          .eq("id", product.uom_id)
+          .single();
 
-      if (existingProductIndex !== -1) {
-        existingCart[existingProductIndex].quantity += 1;
-      } else {
-        existingCart.push({ ...product, quantity: 1 });
+        if (uomError) throw uomError;
+        setUOM(uomData?.full_name || "Не найдены единицы измерения товара");
       }
-      localStorage.setItem("cart", JSON.stringify(existingCart));
+    } catch (error) {
+      setError(error.message);
     }
   };
+
+  const fetchManufacturer = async () => {
+    try {
+      if (product && product.manufacturer_id) {
+        const { data: manufacturerData, error: manufacturerError } =
+          await supabase
+            .from("manufactures")
+            .select("full_name")
+            .eq("id", product.manufacturer_id)
+            .single();
+
+        if (manufacturerError) throw manufacturerError;
+        setManufacturer(
+          manufacturerData?.full_name || "Производитель не найден"
+        );
+      }
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+  const fetchSimilarProducts = async () => {
+    try {
+      if (product && product.product_type_id) {
+        const { data, error } = await supabase
+          .from("products")
+          .select("*")
+          .eq("product_type_id", product.product_type_id)
+          .neq("id", product.id)
+          .limit(4);
+
+        if (error) throw error;
+        setSimilarProducts(data);
+      }
+    } catch (error) {
+      console.error("Error fetching similar products:", error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const { data: productData, error: productError } = await supabase
+          .from("products")
+          .select("*")
+          .eq("id", productId)
+          .single();
+
+        if (productError) throw productError;
+        setProduct(productData);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const fetchPrice = async () => {
+      try {
+        const { data: priceData, error: priceError } = await supabase
+          .from("price_history")
+          .select("price")
+          .eq("product_id", productId)
+          .order("period", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (priceError) throw priceError;
+        setPrice(priceData?.price || "Цена не найдена");
+      } catch (error) {
+        setError(error.message);
+      }
+    };
+
+    fetchProduct();
+    fetchPrice();
+  }, [productId]);
+
+  useEffect(() => {
+    if (product) {
+      fetchUOM();
+      fetchManufacturer();
+      fetchSimilarProducts();
+    }
+  }, [product]);
+
+  const handleAddToCart = () => {
+    if (typeof window !== "undefined" && product) {
+      try {
+        const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
+        const existingProductIndex = existingCart.findIndex(
+          (item) => item.id === product.id
+        );
+
+        if (existingProductIndex !== -1) {
+          existingCart[existingProductIndex].quantity += 1;
+        } else {
+          existingCart.push({
+            id: product.id,
+            productName: product.product_name, // Ensure this field is included
+            description: product.description, // Ensure this field is included
+            imageURL: product.image_URL, // Ensure this field is included
+            price: price, // Ensure this field is included
+            currency: "BYN", // Add currency if applicable
+            quantity: 1,
+          });
+        }
+        localStorage.setItem("cart", JSON.stringify(existingCart));
+        alert("Товар добавлен в корзину!"); // Optional: Add a confirmation message
+      } catch (error) {
+        console.error("Error adding to cart:", error);
+      }
+    }
+  };
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+  if (!product) return <div>Продукт не найден</div>;
 
   return (
     <div className="">
       <div className="pt-6 pb-5 mx-auto sm:ml-4 pl-4 pr-4 sm:mr-4 lg:ml-32 lg:mr-32 mt-4 mb-4 shadow-xl rounded-lg px-4 bg-white">
         <h1 className="font-bold text-3xl uppercase mb-4">
-          {product.productName}
+          {product.product_name}
         </h1>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <div className="w-full h-auto mb-4">
               <Image
-                src={product.imageURL}
-                alt={product.productName}
+                src={product.image_URL || "/default-image.png"}
+                alt={product.product_name || "Product image"}
                 width={400}
                 height={400}
                 className="rounded-lg"
@@ -63,7 +180,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
           <div>
             <div className="mb-4">
               <p>
-                <b>Цена:</b> {product.price} {product.currency}
+                <b>Цена:</b> {price !== null ? `${price}` : "Загрузка..."}
               </p>
               <p>
                 <b>Количество:</b>{" "}
@@ -72,10 +189,10 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                   : "Нет в наличии. Под заказ."}
               </p>
               <p>
-                <b>Единица измерения:</b> {product.unitOfMeasure}
+                <b>Единица измерения:</b> {uom || "Загрузка..."}
               </p>
               <p>
-                <b>Производитель:</b> {product.manufacturer}
+                <b>Производитель:</b> {manufacturer || "Загрузка..."}
               </p>
             </div>
             <div className="mb-4">
@@ -91,23 +208,21 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                     </th>
                   </tr>
                 </thead>
-                <tbody>
-                  {product.otherAttributes &&
-                    product.otherAttributes.map((attribute, index) => (
-                      <tr key={index}>
-                        <td className="px-4 py-2 border border-gray-300">
-                          {attribute.name !== "string"
-                            ? attribute.name
-                            : "Не указано"}
-                        </td>
-                        <td className="px-4 py-2 border border-gray-300">
-                          {attribute.value !== "string"
-                            ? attribute.value
-                            : "Не указано"}
-                        </td>
-                      </tr>
-                    ))}
-                </tbody>
+                {product.otherAttributes &&
+                  Array.isArray(product.otherAttributes) && (
+                    <tbody>
+                      {product.otherAttributes.map((attribute, index) => (
+                        <tr key={index}>
+                          <td className="px-4 py-2 border border-gray-300">
+                            {attribute.name || "Не указано"}
+                          </td>
+                          <td className="px-4 py-2 border border-gray-300">
+                            {attribute.value || "Не указано"}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  )}
               </table>
             </div>
             <div className="mb-4">
@@ -151,7 +266,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
       </div>
       <SimilarProducts
         key={product.id}
-        products={data.products}
+        products={similarProducts}
         currentProductId={product.id}
       />
     </div>

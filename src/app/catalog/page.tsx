@@ -1,55 +1,97 @@
 "use client";
 
+import React from "react";
 import NextLink from "next/link";
 import { useSearch } from "../context/searchContext";
 import { useState, useEffect } from "react";
-import { data } from "./../utils/data"; // Your product data
 import Image from "next/image";
 import { Button } from "@mui/material";
-import Filters from "./filters"; // Import Filters component
-import { manufacturers, productTypes } from "@/db/schema/products";
+import Filters from "./filters";
+import { supabase } from "../../lib/supabaseClient.js";
 
 export default function Catalog() {
-  const { catalogSearchQuery, setCatalogSearchQuery } = useSearch(); // Getting search query from context
+  const { catalogSearchQuery, setCatalogSearchQuery } = useSearch();
 
-  const [sortedData, setSortedData] = useState(data.products);
+  const [allProducts, setAllProducts] = useState([]);
+  const [sortedData, setSortedData] = useState([]);
+  const [categories, setCategories] = useState([]); // Состояние для категорий
   const [filters, setFilters] = useState({
-    productTypes: "",
+    categoryIds: [], // Используем массив ID категорий
     manufacturers: [],
     minPrice: "",
     maxPrice: "",
-    availability: "all", // Include availability in the filters
+    availability: "all",
   });
 
-  const [sortCriteria, setSortCriteria] = useState<"name" | "price">(() => {
-    if (typeof window !== "undefined") {
-      return (
-        (localStorage.getItem("sortCriteria") as "name" | "price") || "name"
-      );
+  const [sortCriteria, setSortCriteria] = useState<"name" | "price">("name");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+
+  // Загрузка продуктов
+  const fetchProducts = async () => {
+    const { data: productsData, error: productsError } = await supabase
+      .from("products")
+      .select(
+        "*, price_history(price), product_types(id, name, entry_parent_id)"
+      )
+      .order("id", { ascending: true });
+
+    if (productsError) {
+      console.error("Error fetching products: ", productsError.message);
+      return [];
     }
-    return "name";
-  });
 
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">(() => {
-    if (typeof window !== "undefined") {
-      return (localStorage.getItem("sortOrder") as "asc" | "desc") || "asc";
+    const productsWithPrices = productsData.map((product) => ({
+      ...product,
+      productName: product.product_name,
+      imageURL: product.image_URL,
+      price:
+        product.price_history.length > 0
+          ? product.price_history[0].price
+          : null,
+    }));
+
+    setAllProducts(productsWithPrices);
+    setSortedData(productsWithPrices);
+  };
+
+  // Загрузка категорий
+  const fetchCategories = async () => {
+    const { data: categoriesData, error: categoriesError } = await supabase
+      .from("product_types")
+      .select("id, name, entry_parent_id") // Убедитесь, что entry_parent_id включен в выборку
+      .order("id", { ascending: true });
+
+    if (categoriesError) {
+      console.error("Error fetching categories: ", categoriesError.message);
+      return [];
     }
-    return "asc";
-  });
 
-  // Apply filters
-  const applyFilters = () => {
-    let filtered = [...data.products];
+    setCategories(categoriesData);
+  };
 
-    if (filters.productTypes) {
+  useEffect(() => {
+    fetchProducts();
+    fetchCategories();
+  }, []);
+
+  // Применение фильтров
+  const applyFilters = (products) => {
+    let filtered = [...products];
+
+    // Удаляем пустые значения из фильтров
+    const validCategoryIds = filters.categoryIds.filter((id) => id !== "");
+
+    // Фильтрация по категориям, если выбран фильтр (categoryIds не пуст)
+    if (validCategoryIds.length > 0) {
       filtered = filtered.filter(
-        (product) => product.productType === filters.productTypes
+        (product) => validCategoryIds.includes(String(product.product_types.id)) // Преобразуем id в строку для сравнения
       );
     }
 
+    // Остальные фильтры
     if (filters.manufacturers.length > 0) {
       filtered = filtered.filter((product) =>
-        filters.manufacturers.includes(product.manufacturer)
+        filters.manufacturers.includes(String(product.manufacturer_id))
       );
     }
 
@@ -66,36 +108,42 @@ export default function Catalog() {
     }
 
     if (filters.availability === "available") {
-      filtered = filtered.filter((product) => product.amount > 0); // Только доступные товары
+      filtered = filtered.filter((product) => product.amount > 0);
     }
 
     return filtered;
   };
-
-  // Function to filter products based on search query
+  // Для отладки
+  useEffect(() => {
+    console.log("Filters:", filters);
+    const filteredData = applyFilters(allProducts);
+    console.log("Filtered Data:", filteredData);
+    const searchedData = searchProducts(filteredData);
+    console.log("Searched Data:", searchedData);
+    const sorted = sortProducts(searchedData);
+    console.log("Sorted Data:", sorted);
+    setSortedData(sorted);
+  }, [filters, catalogSearchQuery, sortCriteria, sortOrder, allProducts]);
+  // Поиск и сортировка
   const searchProducts = (filteredProducts) => {
-    if (!catalogSearchQuery) return filteredProducts; // If no search query, return all filtered products
+    if (!catalogSearchQuery) return filteredProducts;
 
     return filteredProducts.filter((product) => {
       const searchQueryLower = catalogSearchQuery.toLowerCase();
       const productNameLower = product.productName.toLowerCase();
-      const productTypeLower = product.productType.toLowerCase();
-      const manufacturerLower = product.manufacturer.toLowerCase();
+      const descriptionLower = product.description.toLowerCase();
 
-      // Search across product name, type, and manufacturer
       return (
         productNameLower.includes(searchQueryLower) ||
-        productTypeLower.includes(searchQueryLower) ||
-        manufacturerLower.includes(searchQueryLower)
+        descriptionLower.includes(searchQueryLower)
       );
     });
   };
 
-  // Sorting
-  const sortProducts = (filteredProducts: typeof data.products) => {
+  const sortProducts = (filteredProducts) => {
     const sorted = [...filteredProducts];
 
-    if (sortCriteria === "productName") {
+    if (sortCriteria === "name") {
       return sorted.sort((a, b) =>
         sortOrder === "asc"
           ? a.productName.localeCompare(b.productName)
@@ -108,72 +156,55 @@ export default function Catalog() {
     }
   };
 
-  // Handle filter change
-  const handleFilterChange = (newFilters = {}) => {
-    setFilters((prevFilters) => {
-      const updatedFilters = { ...prevFilters, ...newFilters };
-      localStorage.setItem("filters", JSON.stringify(updatedFilters));
-      return updatedFilters;
-    });
+  // Обработчик изменения фильтров
+  const handleFilterChange = (newFilters) => {
+    setFilters((prevFilters) => ({ ...prevFilters, ...newFilters }));
   };
 
-  // Handle sort criteria change
+  // Обработчик изменения сортировки
   const handleSortChange = (event) => {
     const [newSortCriteria, newSortOrder] = event.target.value.split("-");
     setSortCriteria(newSortCriteria);
     setSortOrder(newSortOrder);
-
-    // Save in localStorage
-    localStorage.setItem("sortCriteria", newSortCriteria);
-    localStorage.setItem("sortOrder", newSortOrder);
   };
 
+  // Применение фильтров, поиска и сортировки
   useEffect(() => {
-    const filteredData = applyFilters();
-    const searchedData = searchProducts(filteredData); // Apply search query
-    const sortedData = sortProducts(searchedData);
-    setSortedData(sortedData);
-  }, [filters, catalogSearchQuery, sortCriteria, sortOrder]);
+    const filteredData = applyFilters(allProducts);
+    const searchedData = searchProducts(filteredData);
+    const sorted = sortProducts(searchedData);
+    setSortedData(sorted);
+  }, [filters, catalogSearchQuery, sortCriteria, sortOrder, allProducts]);
 
   return (
     <div>
-      <Filters onFilterChange={handleFilterChange} />
+      <Filters onFilterChange={handleFilterChange} categories={categories} />
       <div className="pt-6 pb-2 mb-4 mx-auto pl-4 pr-4 sm:mr-4 sm:ml-4 lg:ml-32 lg:mr-32 mt-4 shadow-xl rounded-lg px-4 bg-white">
-        <title>Каталог</title>
-        <h1 className="text-4xl font-regular">Каталог</h1>
+        <title>Catalog</title>
+        <h1 className="text-4xl font-regular">Catalog</h1>
         <div className="mt-4 mb-4">
           <input
             type="text"
             name="search"
             id="search"
-            placeholder="Поиск в Каталоге. Например, “шпатлевка”"
+            placeholder="Search the catalog. For example, 'paint'"
             className="w-full outline-none bg-white text-gray-600 text-base font-oswald border-2 h-10 pl-2 pr-2 rounded-lg border-zinc-500 focus:border-orange-400"
             value={catalogSearchQuery}
             onChange={(e) => setCatalogSearchQuery(e.target.value)}
           />
         </div>
-
         <div className="mb-4">
           <select
             onChange={handleSortChange}
             className="bg-white p-2 rounded-lg shadow-xl font-oswald"
             value={`${sortCriteria}-${sortOrder}`}
           >
-            <option value="name-asc" className="font-oswald">
-              Sort by Name (A-Z)
-            </option>
-            <option value="name-desc" className="font-oswald">
-              Sort by Name (Z-A)
-            </option>
-            <option value="price-asc" className="font-oswald">
-              Sort by Price (Low to High)
-            </option>
-            <option value="price-desc" className="font-oswald">
-              Sort by Price (High to Low)
-            </option>
+            <option value="name-asc">Sort by Name (A-Z)</option>
+            <option value="name-desc">Sort by Name (Z-A)</option>
+            <option value="price-asc">Sort by Price (Low to High)</option>
+            <option value="price-desc">Sort by Price (High to Low)</option>
           </select>
         </div>
-
         {sortedData.length > 0 ? (
           sortedData.map((product) => (
             <NextLink href={`catalog/${product.id}`} passHref key={product.id}>
@@ -184,7 +215,7 @@ export default function Catalog() {
                 <div className="flex flex-col sm:flex-row justify-between">
                   <div className="flex pr-4 items-center">
                     <Image
-                      src={product.imageURL}
+                      src={product.imageURL || "/default-image.png"}
                       alt={product.productName}
                       width={100}
                       height={100}
@@ -196,11 +227,14 @@ export default function Catalog() {
                       {product.productName}
                     </h1>
                     <p className="mt-2 font-light text-xl">
-                      {product.amount > 0 ? "В наличии" : "Нет в наличии"}
+                      {product.amount > 0 ? "In stock" : "Out of stock"}
                     </p>
                     <Button className="text-black bg-yellow font-regular text-xl normal-case mt-4 w-24 h-16 rounded-lg leading-6">
-                      {product.price ? product.price : "Уточняйте"} <br />
-                      {product.price ? "руб./" + product.unitOfMeasure : ""}
+                      {product.price !== null
+                        ? product.price
+                        : "Contact for price"}{" "}
+                      <br />
+                      {product.price !== null ? "rub./" + product.uom_id : ""}
                     </Button>
                   </div>
                 </div>
@@ -208,8 +242,8 @@ export default function Catalog() {
             </NextLink>
           ))
         ) : (
-          <p className="text-center mt-4">Нет продуктов по вашему запросу.</p>
-        )}
+          <p className="text-center mt-4">No products found for your query.</p>
+        )}{" "}
       </div>
     </div>
   );
