@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import react from "react"
 import NextLink from "next/link";
 import { useSearch } from "../context/searchContext";
 import { useState, useEffect } from "react";
@@ -212,8 +212,8 @@ export default function Catalog() {
                 className="w-full mt-5 mb-3 drop-shadow-2xl rounded-lg px-4 py-4 bg-white hover:bg-[#fdf3e1] sm:flex sm:justify-between sm:items-center sm:z-20"
                 key={product.id}
               >
-                <div className="flex flex-col sm:flex-row justify-between">
-                  <div className="flex pr-4 items-center">
+                <div className="flex flex-row justify-between align-middle">
+                  <div className="flex pr-3 items-center align-middle">
                     <Image
                       src={product.imageURL || "/default-image.png"}
                       alt={product.productName}
@@ -221,8 +221,8 @@ export default function Catalog() {
                       height={100}
                     />
                   </div>
-                  <div className="wrapper w-[2px] bg-gradient-to-b from-[#EC4700] to-[#FCCA27] rounded-md sm:h-full sm:my-auto"></div>
-                  <div className="flex-1 ml-4 align-middle height-full">
+                  <div className="wrapper w-1 bg-gradient-to-b from-[#EC4700] to-[#FCCA27] rounded-full sm:h-[170px] h-full sm:mx-2 mx-2"></div>                  
+                  <div className="flex-1 ml-4 align-middle h-full">
                     <h1 className="text-2xl mt-4 font-regular">
                       {product.productName}
                     </h1>

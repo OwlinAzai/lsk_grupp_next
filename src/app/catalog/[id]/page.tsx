@@ -8,9 +8,7 @@ import SimilarProducts from "./similarProducts";
 import { supabase } from "@/lib/supabaseClient";
 
 export default function Page({ params }: { params: { id: string } }) {
-  // Unwrap the params with React.use()
   const { id } = React.use(params);
-
   const productId = Number(id);
 
   const [product, setProduct] = useState(null);
@@ -69,6 +67,7 @@ export default function Page({ params }: { params: { id: string } }) {
           .limit(4);
 
         if (error) throw error;
+        console.log("Similar Products Data:", data); // Логируем данные
         setSimilarProducts(data);
       }
     } catch (error) {
@@ -138,6 +137,8 @@ export default function Page({ params }: { params: { id: string } }) {
     }
   }, [product]);
 
+  console.log("SimilarProducts:", similarProducts);
+
   const handleAddToCart = () => {
     if (typeof window !== "undefined" && product) {
       try {
@@ -151,16 +152,16 @@ export default function Page({ params }: { params: { id: string } }) {
         } else {
           existingCart.push({
             id: product.id,
-            productName: product.product_name, // Ensure this field is included
-            description: product.description, // Ensure this field is included
-            imageURL: product.image_URL, // Ensure this field is included
-            price: price, // Ensure this field is included
-            currency: "BYN", // Add currency if applicable
+            productName: product.product_name,
+            description: product.description,
+            imageURL: product.image_URL,
+            price: price,
+            currency: "BYN",
             quantity: 1,
           });
         }
         localStorage.setItem("cart", JSON.stringify(existingCart));
-        alert("Товар добавлен в корзину!"); // Optional: Add a confirmation message
+        alert("Товар добавлен в корзину!");
       } catch (error) {
         console.error("Error adding to cart:", error);
       }
@@ -258,9 +259,9 @@ export default function Page({ params }: { params: { id: string } }) {
                 <b>Телефоны:</b>
               </p>
               <ul>
-                <li>-375 (29) 278-23-43 МГС Восхилий Николаевич</li>
-                <li>-375 (17) 243-91-59 Рабочий телефон</li>
-                <li>-375 (29) 173-05-54 А1 Игорь Болеславович</li>
+                <li>+375 (29) 278-23-43 МГС Восхилий Николаевич</li>
+                <li>+375 (17) 243-91-59 Рабочий телефон</li>
+                <li>+375 (29) 173-05-54 А1 Игорь Болеславович</li>
               </ul>
               <p>
                 <b>Контактное лицо:</b> Германский Игорь Болеславович
@@ -295,4 +296,4 @@ export default function Page({ params }: { params: { id: string } }) {
       />
     </div>
   );
-}
+} 
