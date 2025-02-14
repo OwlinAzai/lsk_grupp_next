@@ -81,11 +81,26 @@ export default function Page({ params }: { params: { id: string } }) {
       try {
         const { data: productData, error: productError } = await supabase
           .from("products")
-          .select("*")
+          .select("*, other_attributes")
           .eq("id", productId)
           .single();
 
         if (productError) throw productError;
+
+        // Parse other_attributes if needed
+        if (
+          productData?.other_attributes &&
+          typeof productData.other_attributes === "string"
+        ) {
+          try {
+            productData.other_attributes = JSON.parse(
+              productData.other_attributes
+            );
+          } catch (error) {
+            console.error("Error parsing other_attributes:", error);
+            productData.other_attributes = []; // Default to empty array if parsing fails
+          }
+        }
         setProduct(productData);
       } catch (error) {
         setError(error.message);
@@ -208,21 +223,30 @@ export default function Page({ params }: { params: { id: string } }) {
                     </th>
                   </tr>
                 </thead>
-                {product.otherAttributes &&
-                  Array.isArray(product.otherAttributes) && (
-                    <tbody>
-                      {product.otherAttributes.map((attribute, index) => (
-                        <tr key={index}>
-                          <td className="px-4 py-2 border border-gray-300">
-                            {attribute.name || "Не указано"}
-                          </td>
-                          <td className="px-4 py-2 border border-gray-300">
-                            {attribute.value || "Не указано"}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
+                <tbody>
+                  {Array.isArray(product.other_attributes) &&
+                  product.other_attributes.length > 0 ? (
+                    product.other_attributes.map((attribute, index) => (
+                      <tr key={index}>
+                        <td className="px-4 py-2 border border-gray-300">
+                          {attribute.name || "Не указано"}
+                        </td>
+                        <td className="px-4 py-2 border border-gray-300">
+                          {attribute.value || "Не указано"}
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td
+                        colSpan={2}
+                        className="px-4 py-2 border border-gray-300"
+                      >
+                        Характеристики не найдены
+                      </td>
+                    </tr>
                   )}
+                </tbody>
               </table>
             </div>
             <div className="mb-4">
