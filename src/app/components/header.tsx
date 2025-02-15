@@ -38,7 +38,7 @@ const MobileSearchPopup = ({
             ref={searchInputRef}
             type="text"
             placeholder="Поиск товаров..."
-            className="w-full h-12 rounded-full bg-gray-100 pl-4 pr-12 text-black text-base focus:outline-none focus:ring-2 focus:ring-orange-500"
+            className="w-full h-[50px] rounded-full bg-gray-100 ring-2 ring-slate-400 pl-4 pr-12 text-black text-base focus:outline-none focus:ring-2 focus:ring-orange-500"
             value={headerSearchQuery}
             onChange={handleSearchChange}
           />

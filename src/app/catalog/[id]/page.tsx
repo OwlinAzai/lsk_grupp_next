@@ -175,12 +175,12 @@ export default function Page({ params }: { params: { id: string } }) {
   return (
     <div className="">
       <div className="pt-6 pb-5 mx-auto sm:ml-4 pl-4 pr-4 sm:mr-4 lg:ml-32 lg:mr-32 mt-4 mb-4 shadow-xl rounded-lg px-4 bg-white">
-        <h1 className="font-bold text-3xl uppercase mb-4">
+        <h1 className="font-bold text-3xl uppercase mb-4 text-ellipsis overflow-hidden whitespace-nowrap">
           {product.product_name}
         </h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <div className="w-full h-auto mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="flex justify-center mb-4">
+            <div className="w-full max-w-md mx-auto h-auto flex justify-center">
               <Image
                 src={product.image_URL || "/default-image.png"}
                 alt={product.product_name || "Product image"}
@@ -189,12 +189,10 @@ export default function Page({ params }: { params: { id: string } }) {
                 className="rounded-lg"
               />
             </div>
-            <div className="mb-4">
-              <p className="text-gray-700">{product.description}</p>
-            </div>
           </div>
           <div>
-            <div className="mb-4">
+          <div className="align-middle">
+            <div className="md:mt-14 mb-4 sm:mt-4">
               <p>
                 <b>Цена:</b> {price !== null ? `${price}` : "Загрузка..."}
               </p>
@@ -211,7 +209,52 @@ export default function Page({ params }: { params: { id: string } }) {
                 <b>Производитель:</b> {manufacturer || "Загрузка..."}
               </p>
             </div>
-            <div className="mb-4">
+            <div className="mb-2">
+              <h2 className="text-xl font-semibold mb-2">Контакты:</h2>
+              <p>
+                <b>Компания:</b> ООО "ЛСК-Групп"
+              </p>
+              <p>
+                <b>Телефоны:</b>
+              </p>
+              <ul>
+                <li>+375 (29) 278-23-43 МГС Восхилий Николаевич</li>
+                <li>+375 (17) 243-91-59 Рабочий телефон</li>
+                <li>+375 (29) 173-05-54 А1 Игорь Болеславович</li>
+              </ul>
+              <p>
+                <b>Контактное лицо:</b> Германский Игорь Болеславович
+              </p>
+              <p>
+                <b>Адрес:</b> г. Минск, ул. Селицкого 23, Минск, Беларусь
+              </p>
+              <p>
+                <b>Email:</b> lskgruponlin@gmail.com
+              </p>
+            </div>
+            </div>
+            <div className="flex gap-4 mb-2">
+              <Button
+                className="bg-orange-500 hover:bg-orange-400 text-white font-bold py-2 px-4 hover:border-orange-500 rounded mt-2"
+                onClick={handleAddToCart}
+              >
+                Добавить в корзину
+              </Button>
+              <NextLink href="/catalog">
+                <Button className="bg-orange-500 hover:bg-orange-400 text-white font-bold py-2 px-4 hover:border-orange-500 rounded mt-2">
+                  Вернуться
+                </Button>
+              </NextLink>
+            </div>
+          </div>
+        </div>
+      <div className="mb-4 w-full">
+          <h2 className="text-xl font-semibold mt-2 mb-2">Описание:</h2>
+          <p className="text-sm break-words w-full">
+            {product.description}
+          </p>
+        </div>
+        <div className="mb-4">
               <h2 className="text-xl font-semibold mb-2">Характеристики:</h2>
               <table className="table-auto w-full border-collapse">
                 <thead>
@@ -250,44 +293,6 @@ export default function Page({ params }: { params: { id: string } }) {
                 </tbody>
               </table>
             </div>
-            <div className="mb-4">
-              <h2 className="text-xl font-semibold mb-2">Контакты:</h2>
-              <p>
-                <b>Компания:</b> ООО "ЛСК-Групп"
-              </p>
-              <p>
-                <b>Телефоны:</b>
-              </p>
-              <ul>
-                <li>+375 (29) 278-23-43 МГС Восхилий Николаевич</li>
-                <li>+375 (17) 243-91-59 Рабочий телефон</li>
-                <li>+375 (29) 173-05-54 А1 Игорь Болеславович</li>
-              </ul>
-              <p>
-                <b>Контактное лицо:</b> Германский Игорь Болеславович
-              </p>
-              <p>
-                <b>Адрес:</b> г. Минск, ул. Селицкого 23, Минск, Беларусь
-              </p>
-              <p>
-                <b>Email:</b> lskgruponlin@gmail.com
-              </p>
-            </div>
-            <div className="flex gap-4">
-              <Button
-                className="bg-orange-500 hover:bg-orange-400 text-white font-bold py-2 px-4 hover:border-orange-500 rounded mt-2"
-                onClick={handleAddToCart}
-              >
-                Добавить в корзину
-              </Button>
-              <NextLink href="/catalog">
-                <Button className="bg-orange-500 hover:bg-orange-400 text-white font-bold py-2 px-4 hover:border-orange-500 rounded mt-2">
-                  Вернуться
-                </Button>
-              </NextLink>
-            </div>
-          </div>
-        </div>
       </div>
       <SimilarProducts
         key={product.id}

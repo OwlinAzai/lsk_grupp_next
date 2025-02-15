@@ -200,28 +200,33 @@ const Contact: FC = () => {
                 {cart.map(
                   (
                     item,
-                    index // <-- Fixed: Added curly braces
+                    index
                   ) => (
                     <div
                       key={index}
-                      className="bg-white p-6 rounded-lg drop-shadow-2xl"
+                      className="bg-white p-6 rounded-lg drop-shadow-xl max-w-full overflow-hidden"
                     >
                       <h3 className="text-xl font-sans">{item.productName}</h3>
-                      <div className="flex flex-row justify-between">
+                      <div className="flex flex-col md:flex-row justify-between">
                         {item.imageURL && (
-                          <Image
-                            src={item.imageURL}
-                            alt={item.productName || "Product Image"}
-                            width={100}
-                            height={100}
-                            className="mt-2 mb-4"
-                          />
+                          <div className="w-full md:w-1/3 flex justify-center">
+                            <Image
+                              src={item.imageURL}
+                              alt={item.productName || "Product Image"}
+                              width={100}
+                              height={100}
+                              className="mt-2 mb-4 object-cover w-full h-auto rounded-lg max-w-[150px] md:max-w-none"
+                            />
+                          </div>
                         )}
-                        <p className="text-sm font-sans text-gray-600">
-                          {item.description}
-                        </p>
+                        <div className="w-full md:w-2/3 ml-0 md:ml-4">
+                          <p className="mt-4 text-l font-semiBold">Описание товара:</p>
+                          <p className="mt-4 text-sm font-sans text-gray-600 w-full break-words overflow-hidden text-ellipsis">
+                            {item.description}
+                          </p>
+                        </div>
                       </div>
-                      <p className="font-semibold font-sans">
+                      <p className="font-semibold font-sans mt-4">
                         Price: {item?.price || "Please check"}{" "}
                         {item?.currency || ""}
                       </p>
@@ -326,3 +331,4 @@ const Contact: FC = () => {
 };
 
 export default Contact;
+

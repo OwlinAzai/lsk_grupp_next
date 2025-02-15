@@ -28,12 +28,13 @@ export default function SimilarProducts({ currentProductId }) {
         if (productError) throw productError;
 
         // Получаем товары с таким же product_type_id, исключая текущий товар
-        const { data: similarProductsData, error: similarError } = await supabase
-          .from("products")
-          .select("*, price_history(price)")
-          .eq("product_type_id", currentProduct.product_type_id)
-          .neq("id", currentProductId)
-          .limit(4); // Ограничиваем количество похожих товаров
+        const { data: similarProductsData, error: similarError } =
+          await supabase
+            .from("products")
+            .select("*, price_history(price)")
+            .eq("product_type_id", currentProduct.product_type_id)
+            .neq("id", currentProductId)
+            .limit(4); // Ограничиваем количество похожих товаров
 
         if (similarError) throw similarError;
 
@@ -51,7 +52,9 @@ export default function SimilarProducts({ currentProductId }) {
   if (loading) return <div>Загрузка похожих товаров...</div>;
   if (error) return <div>Ошибка: {error}</div>;
   if (!similarProducts || similarProducts.length === 0) {
-    return <p className="text-center text-orange-700">Похожие товары не найдены!</p>;
+    return (
+      <p className="text-center text-orange-700">Похожие товары не найдены!</p>
+    );
   }
 
   return (
@@ -80,8 +83,16 @@ export default function SimilarProducts({ currentProductId }) {
               centeredSlides={true}
               breakpoints={{
                 480: { slidesPerView: 1.5, spaceBetween: 8 },
-                640: { slidesPerView: 2.2, spaceBetween: 8, centeredSlides: false },
-                700: { slidesPerView: 2.7, spaceBetween: 1, centeredSlides: false },
+                640: {
+                  slidesPerView: 2.2,
+                  spaceBetween: 8,
+                  centeredSlides: false,
+                },
+                700: {
+                  slidesPerView: 2.7,
+                  spaceBetween: 1,
+                  centeredSlides: false,
+                },
                 768: { slidesPerView: 3, spaceBetween: 8 },
                 830: { slidesPerView: 3, spaceBetween: 8 },
                 960: { slidesPerView: 4, spaceBetween: 8 },
@@ -108,7 +119,9 @@ export default function SimilarProducts({ currentProductId }) {
                       </h3>
                       <div className="flex justify-center">
                         <span className="bg-yellow-400 text-gray-900 text-xs sm:text-sm font-bold px-2 py-1 rounded">
-                          {product.price_history?.[0]?.price || "Цена не указана"} BYN
+                          {product.price_history?.[0]?.price ||
+                            "Цена не указана"}{" "}
+                          BYN
                         </span>
                       </div>
                     </div>

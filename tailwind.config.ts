@@ -12,6 +12,7 @@ export default {
         sans: ["var(--font-oswald)"],
         light: ["var(--font-oswald-wght)"],
         regular: ["Oswald", "regular"],
+        semiBold: ["Oswald", "semiBold"],
         bold: ["Oswald", "bold"],
       },
       colors: {
