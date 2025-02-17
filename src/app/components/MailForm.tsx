@@ -204,22 +204,21 @@ const Contact: FC = () => {
                   ) => (
                     <div
                       key={index}
-                      className="bg-white p-6 rounded-lg drop-shadow-xl max-w-full overflow-hidden"
+                      className="bg-white p-6 rounded-lg drop-shadow-xl max-w-full overflow-hidden hover:bg-[#fdf3e1]"
                     >
-                      <h3 className="text-xl font-sans">{item.productName}</h3>
                       <div className="flex flex-col md:flex-row justify-between">
                         {item.imageURL && (
-                          <div className="w-full md:w-1/3 flex justify-center">
-                            <Image
-                              src={item.imageURL}
-                              alt={item.productName || "Product Image"}
-                              width={100}
-                              height={100}
-                              className="mt-2 mb-4 object-cover w-full h-auto rounded-lg max-w-[150px] md:max-w-none"
-                            />
+                          <div className="w-full md:w-1/6 flex justify-center">
+				<Image
+                      		src={item.imageURL || "/default-image.png"}
+                      		alt={item.productName}
+                      		width={100}
+                      		height={100}
+                    		/>
                           </div>
                         )}
-                        <div className="w-full md:w-2/3 ml-0 md:ml-4">
+                        <div className="w-full md:w-5/6 ml-0 md:ml-4">
+			  <h1 className="mt-2 text-xl font-semiBold">{item.productName}</h1>
                           <p className="mt-4 text-l font-semiBold">Описание товара:</p>
                           <p className="mt-4 text-sm font-sans text-gray-600 w-full break-words overflow-hidden text-ellipsis">
                             {item.description}
@@ -259,7 +258,7 @@ const Contact: FC = () => {
                         </div>
                         <button
                           type="button"
-                          className="mt-3 bg-red-500 rounded-md px-3 py-1 text-white hover:bg-red-600"
+                          className="bg-red-500 rounded-md px-3 py-1 text-white hover:bg-red-600"
                           onClick={() => removeItemFromCart(index)}
                         >
                           Remove

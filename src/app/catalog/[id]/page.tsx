@@ -191,8 +191,8 @@ export default function Page({ params }: { params: { id: string } }) {
             </div>
           </div>
           <div>
-          <div className="align-middle">
-            <div className="md:mt-14 mb-4 sm:mt-4">
+          <div className="align-middle font-regular">
+            <div className="md:mt-14 mb-4 sm:mt-4 text-2xl">
               <p>
                 <b>Цена:</b> {price !== null ? `${price}` : "Загрузка..."}
               </p>
@@ -248,34 +248,33 @@ export default function Page({ params }: { params: { id: string } }) {
             </div>
           </div>
         </div>
-      <div className="mb-4 w-full">
-          <h2 className="text-xl font-semibold mt-2 mb-2">Описание:</h2>
-          <p className="text-sm break-words w-full">
+      <div className="w-full">
+          <h2 className="text-2xl font-regular m-0 p-0 -mx-4 mt-2 mb-2 px-4 py-3 text-white bg-brown">Описание:</h2>
+          <p className="text-xl font-light break-words w-full">
             {product.description}
           </p>
-        </div>
-        <div className="mb-4">
-              <h2 className="text-xl font-semibold mb-2">Характеристики:</h2>
-              <table className="table-auto w-full border-collapse">
-                <thead>
-                  <tr>
-                    <th className="px-4 py-2 border border-gray-300">
+	</div>
+        <div className="mb-4 w-full">
+              <h2 className="text-2xl font-regular m-0 p-0 -mx-4 mt-2 mb-2 px-4 py-3 text-white bg-brown">Характеристики:</h2>
+              <table className="table-auto w-full border-collapse font-regular">
+                <thead className="font-regular border-b-1">
+                  <tr className="border-b">
+                    <th className="pt-2 text-left text-2xl font-light">
                       Параметр
                     </th>
-                    <th className="px-4 py-2 border border-gray-300">
-                      Значение
+                    <th className="pt-2 text-right text-2xl">
                     </th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="border-0 font-light text-xl">
                   {Array.isArray(product.other_attributes) &&
                   product.other_attributes.length > 0 ? (
                     product.other_attributes.map((attribute, index) => (
                       <tr key={index}>
-                        <td className="px-4 py-2 border border-gray-300">
+                        <td className="text-left border-b pt-2">
                           {attribute.name || "Не указано"}
                         </td>
-                        <td className="px-4 py-2 border border-gray-300">
+                        <td className="text-right border-b pt-2">
                           {attribute.value || "Не указано"}
                         </td>
                       </tr>

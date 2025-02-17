@@ -1,6 +1,5 @@
 "use client";
 
-import react from "react"
 import NextLink from "next/link";
 import { useSearch } from "../context/searchContext";
 import { useState, useEffect } from "react";
