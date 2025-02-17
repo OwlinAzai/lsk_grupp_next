@@ -26,14 +26,14 @@ const MobileSearchPopup = ({
       <div className="bg-white w-full h-full rounded-tl-lg rounded-tr-lg relative">
         {/* Close Button */}
         <button
-          className="absolute top-4 right-4 p-3 text-gray-600 hover:text-gray-900 rounded-full bg-red-700 shadow-md hover:shadow-lg transition-all duration-300 text-white"
+          className="absolute top-4 right-4 p-3 z-50 text-gray-600 hover:text-gray-900 rounded-full bg-red-700 shadow-md hover:shadow-lg transition-all duration-300 text-white"
           onClick={onClose}
         >
           <CloseIcon />
         </button>
 
         {/* Search Bar */}
-        <div className="px-4 pt-4">
+        <div className="px-4 pt-4 relative">
           <input
             ref={searchInputRef}
             type="text"
@@ -45,7 +45,7 @@ const MobileSearchPopup = ({
           {headerSearchQuery && (
             <button
               onClick={clearSearchInput}
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              className="absolute right-20 top-8 pt-4 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
             >
               <CloseIcon className="w-5 h-5" />
             </button>
