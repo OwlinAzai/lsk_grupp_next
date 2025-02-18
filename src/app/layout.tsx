@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Oswald } from "next/font/google";
 import "./globals.css";
-import Header from "./components/header";
+import Header from "./components/Header";
 import Breadcrumbs from "./components/breadcrumbs";
 import { SearchProvider } from "../app/context/searchContext";
 
@@ -42,7 +42,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${oswald.variable} ${oswaldWght.variable} antialiased bg-[#e4e4e4]`}
       >
         <SearchProvider>
-          <Header />
+	 <Header />
           <Breadcrumbs />
           {children}
         </SearchProvider>

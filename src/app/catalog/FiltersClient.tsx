@@ -3,8 +3,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabaseClient.js";
 
-export default function Filters({ onFilterChange }) {
-  // Состояния компонента
+export default function FiltersClient({ onFilterChange }) {
   const [selectedType, setSelectedType] = useState("");
   const [selectedManufacturers, setSelectedManufacturers] = useState([]);
   const [minPrice, setMinPrice] = useState("");
@@ -13,56 +12,37 @@ export default function Filters({ onFilterChange }) {
   const [productTypes, setProductTypes] = useState([]);
   const [manufacturers, setManufacturers] = useState([]);
 
-  // Загрузка данных
   useEffect(() => {
     const fetchData = async () => {
-      // Загрузка категорий
-      const { data: typesData } = await supabase
-        .from("product_types")
-        .select("*");
+      const { data: typesData } = await supabase.from("product_types").select("*");
       setProductTypes(typesData || []);
 
-      // Загрузка производителей
-      const { data: manufacturersData } = await supabase
-        .from("manufactures")
-        .select("*");
+      const { data: manufacturersData } = await supabase.from("manufactures").select("*");
       setManufacturers(manufacturersData || []);
     };
     fetchData();
   }, []);
 
-  // Обработчик изменения категории
   const handleTypeChange = async (event) => {
     const selectedCategoryId = event.target.value;
     setSelectedType(selectedCategoryId);
     setSelectedManufacturers([]);
 
-    // Получаем все дочерние категории
     const { data: childCategories } = await supabase
       .from("product_types")
       .select("id")
       .eq("entry_parents", selectedCategoryId);
 
-    // Формируем массив ID для фильтрации
     const categoryIds = childCategories
       ? [selectedCategoryId, ...childCategories.map((c) => c.id)]
       : [selectedCategoryId];
 
-    onFilterChange({
-      categoryIds,
-      manufacturers: [],
-      minPrice,
-      maxPrice,
-      availability,
-    });
+    onFilterChange({ categoryIds, manufacturers: [], minPrice, maxPrice, availability });
   };
 
-  // Обработчик изменения производителей
   const handleManufacturerChange = (event) => {
     const manufacturerId = event.target.value;
     const isChecked = event.target.checked;
-
-    // Приводим manufacturerId к строке
     const id = String(manufacturerId);
 
     const newManufacturers = isChecked
@@ -70,58 +50,31 @@ export default function Filters({ onFilterChange }) {
       : selectedManufacturers.filter((selectedId) => selectedId !== id);
 
     setSelectedManufacturers(newManufacturers);
-    onFilterChange({
-      categoryIds: selectedType ? [selectedType] : [],
-      manufacturers: newManufacturers,
-      minPrice,
-      maxPrice,
-      availability,
-    });
+    onFilterChange({ categoryIds: selectedType ? [selectedType] : [], manufacturers: newManufacturers, minPrice, maxPrice, availability });
   };
 
-  // Обработчики изменения цены
   const handleMinPriceChange = (event) => {
     const value = event.target.value;
     setMinPrice(value);
-    onFilterChange({
-      categoryIds: selectedType ? [selectedType] : [],
-      manufacturers: selectedManufacturers,
-      minPrice: value,
-      maxPrice,
-      availability,
-    });
+    onFilterChange({ categoryIds: selectedType ? [selectedType] : [], manufacturers: selectedManufacturers, minPrice: value, maxPrice, availability });
   };
 
   const handleMaxPriceChange = (event) => {
     const value = event.target.value;
     setMaxPrice(value);
-    onFilterChange({
-      categoryIds: selectedType ? [selectedType] : [],
-      manufacturers: selectedManufacturers,
-      minPrice,
-      maxPrice: value,
-      availability,
-    });
+    onFilterChange({ categoryIds: selectedType ? [selectedType] : [], manufacturers: selectedManufacturers, minPrice, maxPrice: value, availability });
   };
 
-  // Обработчик изменения наличия
   const handleAvailabilityChange = (event) => {
     const value = event.target.value;
     setAvailability(value);
-    onFilterChange({
-      categoryIds: selectedType ? [selectedType] : [],
-      manufacturers: selectedManufacturers,
-      minPrice,
-      maxPrice,
-      availability: value,
-    });
+    onFilterChange({ categoryIds: selectedType ? [selectedType] : [], manufacturers: selectedManufacturers, minPrice, maxPrice, availability: value });
   };
 
   return (
     <div className="pt-6 pb-5 mx-auto sm:ml-4 pl-4 pr-4 sm:mr-4 lg:ml-32 lg:mr-32 mt-4 mb-4 shadow-xl rounded-lg px-4 bg-white">
       <h1 className="text-4xl font-regular mb-3">Фильтры</h1>
 
-      {/* Категория */}
       <div className="mb-4">
         <label className="block font-regular text-xl mb-2">Категория</label>
         <select
@@ -138,7 +91,6 @@ export default function Filters({ onFilterChange }) {
         </select>
       </div>
 
-      {/* Цена */}
       <div className="mb-4">
         <label className="block font-regular text-xl mb-2">Цена</label>
         <div className="flex sm:space-x-2 lg:space-x-4">
@@ -159,7 +111,6 @@ export default function Filters({ onFilterChange }) {
         </div>
       </div>
 
-      {/* Производители */}
       <div className="mb-4">
         <label className="block font-regular text-xl mb-2">Производитель</label>
         <div className="flex flex-col space-y-2">
@@ -169,9 +120,7 @@ export default function Filters({ onFilterChange }) {
                 type="checkbox"
                 id={manufacturer.id}
                 value={manufacturer.id}
-                checked={selectedManufacturers.includes(
-                  String(manufacturer.id)
-                )} // Приводим к строке
+                checked={selectedManufacturers.includes(String(manufacturer.id))}
                 onChange={handleManufacturerChange}
                 className="mr-2"
               />
@@ -183,11 +132,8 @@ export default function Filters({ onFilterChange }) {
         </div>
       </div>
 
-      {/* Availability filter */}
       <div className="mb-4">
-        <label className="block font-regular text-xl mb-2">
-          Наличие на складе
-        </label>
+        <label className="block font-regular text-xl mb-2">Наличие на складе</label>
         <div className="flex space-x-2">
           <input
             type="radio"
@@ -220,3 +166,4 @@ export default function Filters({ onFilterChange }) {
     </div>
   );
 }
+

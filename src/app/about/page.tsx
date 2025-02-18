@@ -1,12 +1,4 @@
-"use client";
-
-import Link from "next/link";
-import React from "react";
-import { useState } from "react";
-
 export default function About() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
   return (
     <>
       <div className="flex flex-cols-2 font-sans align-middle">
