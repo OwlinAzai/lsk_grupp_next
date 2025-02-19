@@ -88,20 +88,26 @@ const Contact: FC = () => {
   };
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
-    if (isFormSubmitting) return;
-    setIsFormSubmitting(true);
+  if (isFormSubmitting) return;
+  setIsFormSubmitting(true);
 
-    data.cart = JSON.stringify(cart);
+  // Ensure cart prices are valid
+  const updatedCart = cart.map(item => ({
+    ...item,
+    price: item.price === "Цена не найдена" ? 0 : item.price, // Default to 0 if price is missing
+  }));
 
-    try {
-      await sendEmail(data);
-      setIsModalOpen(true);
-    } catch (error) {
-      setErrorMessage("Error submitting the form. Please try again later.");
-    } finally {
-      setIsFormSubmitting(false);
-    }
-  };
+  data.cart = JSON.stringify(updatedCart);
+
+  try {
+    await sendEmail(data);
+    setIsModalOpen(true);
+  } catch (error) {
+    setErrorMessage("Error submitting the form. Please try again later.");
+  } finally {
+    setIsFormSubmitting(false);
+  }
+};
 
   const totalPrice = cart.reduce(
     (total, item) => total + (Number(item.price) * Number(item.quantity) || 0),

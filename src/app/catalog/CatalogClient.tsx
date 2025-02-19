@@ -2,15 +2,13 @@
 
 import NextLink from "next/link";
 import { useSearch } from "../context/searchContext";
-import { useState, useEffect } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
-import { Button } from "@mui/material";
 import FiltersClient from "./FiltersClient";
+import { debounce } from "lodash";
 
 export default function CatalogClient({ initialProducts, categories }) {
   const { catalogSearchQuery, setCatalogSearchQuery } = useSearch();
-  const [allProducts, setAllProducts] = useState(initialProducts);
-  const [sortedData, setSortedData] = useState(initialProducts);
   const [filters, setFilters] = useState({
     categoryIds: [],
     manufacturers: [],
@@ -21,9 +19,9 @@ export default function CatalogClient({ initialProducts, categories }) {
   const [sortCriteria, setSortCriteria] = useState("name");
   const [sortOrder, setSortOrder] = useState("asc");
 
-  // Фильтрация данных
-  const applyFilters = (products) => {
-    let filtered = [...products];
+  // Мемоизация данных продуктов
+  const filteredData = useMemo(() => {
+    let filtered = [...initialProducts];
     const validCategoryIds = filters.categoryIds.filter((id) => id !== "");
 
     if (validCategoryIds.length > 0) {
@@ -54,20 +52,18 @@ export default function CatalogClient({ initialProducts, categories }) {
       filtered = filtered.filter((product) => product.amount > 0);
     }
 
+    if (catalogSearchQuery) {
+      filtered = filtered.filter((product) =>
+        product.productName.toLowerCase().includes(catalogSearchQuery.toLowerCase())
+      );
+    }
+
     return filtered;
-  };
+  }, [initialProducts, filters, catalogSearchQuery]);
 
-  // Поиск
-  const searchProducts = (filteredProducts) => {
-    if (!catalogSearchQuery) return filteredProducts;
-    return filteredProducts.filter((product) =>
-      product.productName.toLowerCase().includes(catalogSearchQuery.toLowerCase())
-    );
-  };
-
-  // Сортировка
-  const sortProducts = (filteredProducts) => {
-    return [...filteredProducts].sort((a, b) => {
+  // Сортировка данных с мемоизацией
+  const sortedData = useMemo(() => {
+    return [...filteredData].sort((a, b) => {
       if (sortCriteria === "name") {
         return sortOrder === "asc"
           ? a.productName.localeCompare(b.productName)
@@ -75,15 +71,19 @@ export default function CatalogClient({ initialProducts, categories }) {
       }
       return sortOrder === "asc" ? a.price - b.price : b.price - a.price;
     });
-  };
+  }, [filteredData, sortCriteria, sortOrder]);
 
-  // Применение фильтров, поиска и сортировки
+  // Отсрочка (debounce) для поиска
+  const debounceSearch = useMemo(() => {
+    return debounce((query) => setCatalogSearchQuery(query), 500);
+  }, [setCatalogSearchQuery]);
+
   useEffect(() => {
-    const filteredData = applyFilters(allProducts);
-    const searchedData = searchProducts(filteredData);
-    const sorted = sortProducts(searchedData);
-    setSortedData(sorted);
-  }, [filters, catalogSearchQuery, sortCriteria, sortOrder, allProducts]);
+    return () => {
+      // Очистка debounced функции при размонтировании компонента
+      debounceSearch.cancel();
+    };
+  }, [debounceSearch]);
 
   return (
     <div>
@@ -95,9 +95,9 @@ export default function CatalogClient({ initialProducts, categories }) {
           <input
             type="text"
             placeholder="Search the catalog"
-            className="w-full outline-none bg-white text-gray-600 text-base border-2 h-10 pl-2 pr-2 rounded-lg"
+            className="w-full outline-none bg-white text-gray-600 text-base border-2 h-10 pl-2 pr-2 rounded-lg focus:border-orange-400"
             value={catalogSearchQuery}
-            onChange={(e) => setCatalogSearchQuery(e.target.value)}
+            onChange={(e) => debounceSearch(e.target.value)} // Использование debounced функции
           />
         </div>
         <div className="mb-4">
@@ -125,9 +125,9 @@ export default function CatalogClient({ initialProducts, categories }) {
                   <p className="mt-2 font-light text-xl">
                     {product.amount > 0 ? "In stock" : "Out of stock"}
                   </p>
-                  <Button className="text-black bg-yellow text-xl font-regular normal-case mt-4 w-24 h-16 rounded-lg">
+                  <button className="text-black bg-yellow text-xl font-regular normal-case mt-4 w-24 h-16 rounded-lg">
                     {product.price !== null ? `${product.price} rub.` : "Contact for price"}
-                  </Button>
+                  </button>
                 </div>
               </div>
             </NextLink>

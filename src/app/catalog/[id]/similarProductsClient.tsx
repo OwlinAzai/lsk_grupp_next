@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import NextLink from "next/link";
 import Image from "next/image";
@@ -18,6 +17,14 @@ export default function SimilarProducts({ currentProductId }) {
   useEffect(() => {
     const fetchSimilarProducts = async () => {
       try {
+        // Проверка наличия кэшированных данных в localStorage
+        const cachedProducts = localStorage.getItem(`similarProducts-${currentProductId}`);
+        if (cachedProducts) {
+          setSimilarProducts(JSON.parse(cachedProducts));
+          setLoading(false);
+          return;
+        }
+
         // Получаем текущий товар, чтобы узнать его product_type_id
         const { data: currentProduct, error: productError } = await supabase
           .from("products")
@@ -31,12 +38,15 @@ export default function SimilarProducts({ currentProductId }) {
         const { data: similarProductsData, error: similarError } =
           await supabase
             .from("products")
-            .select("*, price_history(price)")
+            .select("id, product_name, price_history(price), image_URL") // Запрашиваем только необходимые поля
             .eq("product_type_id", currentProduct.product_type_id)
             .neq("id", currentProductId)
             .limit(4); // Ограничиваем количество похожих товаров
 
         if (similarError) throw similarError;
+
+        // Кэшируем данные в localStorage
+        localStorage.setItem(`similarProducts-${currentProductId}`, JSON.stringify(similarProductsData));
 
         setSimilarProducts(similarProductsData);
       } catch (error) {
@@ -140,3 +150,4 @@ export default function SimilarProducts({ currentProductId }) {
     </div>
   );
 }
+

@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { Button } from "@mui/material";
 import NextLink from "next/link";
 import Image from "next/image";
 import SimilarProducts from "./similarProductsClient";
@@ -53,6 +52,7 @@ export default function ProductClient({ product, price, uom, manufacturer, simil
                 width={400}
                 height={400}
                 className="rounded-lg"
+		priority={false}
               />
             </div>
           </div>
@@ -88,16 +88,16 @@ export default function ProductClient({ product, price, uom, manufacturer, simil
               </div>
             </div>
             <div className="flex gap-4 mb-2">
-              <Button
+              <button
                 className="bg-orange-500 hover:bg-orange-400 text-white font-bold py-2 px-4 hover:border-orange-500 rounded mt-2"
                 onClick={handleAddToCart}
               >
                 Добавить в корзину
-              </Button>
+              </button>
               <NextLink href="/catalog">
-                <Button className="bg-orange-500 hover:bg-orange-400 text-white font-bold py-2 px-4 hover:border-orange-500 rounded mt-2">
+                <button className="bg-orange-500 hover:bg-orange-400 text-white font-bold py-2 px-4 hover:border-orange-500 rounded mt-2">
                   Вернуться
-                </Button>
+                </button>
               </NextLink>
             </div>
           </div>
