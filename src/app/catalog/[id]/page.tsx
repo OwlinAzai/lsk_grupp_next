@@ -3,7 +3,8 @@ import ProductClient from "./pageClient";
 
 export default async function ProductPage({ params }: { params: { id: string } }) {
   // Ensure params.id is valid and is a number
-  const productId = Number(await params.id);  // Await the params.id
+  const { id } = await params;
+  const productId = Number(id); // No need to await params.id, it's already available synchronously
 
   if (isNaN(productId)) {
     return <div>Неверный ID продукта</div>;
