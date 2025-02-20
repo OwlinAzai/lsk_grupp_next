@@ -1,33 +1,30 @@
 "use client";
 
 import React, { useState } from "react";
+import { useDispatch } from "react-redux"; // импортируем useDispatch
+import { addToCart } from "../../store/cartSlice"; // импортируем действие addToCart
 import NextLink from "next/link";
 import Image from "next/image";
 import SimilarProducts from "./similarProductsClient";
 
 export default function ProductClient({ product, price, uom, manufacturer, similarProducts }) {
   const [error, setError] = useState(null);
+  const dispatch = useDispatch(); // создаем dispatch
 
   const handleAddToCart = () => {
     try {
-      const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
-      const existingProductIndex = existingCart.findIndex((item) => item.id === product.id);
+      const productToAdd = {
+        id: product.id,
+        productName: product.product_name,
+        description: product.description,
+        imageURL: product.image_URL,
+        price: price,
+        currency: "BYN",
+        quantity: 1,
+      };
 
-      if (existingProductIndex !== -1) {
-        existingCart[existingProductIndex].quantity += 1;
-      } else {
-        existingCart.push({
-          id: product.id,
-          productName: product.product_name,
-          description: product.description,
-          imageURL: product.image_URL,
-          price: price,
-          currency: "BYN",
-          quantity: 1,
-        });
-      }
-
-      localStorage.setItem("cart", JSON.stringify(existingCart));
+      // Диспатчим действие для добавления товара в корзину через Redux
+      dispatch(addToCart(productToAdd));
       alert("Товар добавлен в корзину!");
     } catch (error) {
       console.error("Error adding to cart:", error);
@@ -52,7 +49,7 @@ export default function ProductClient({ product, price, uom, manufacturer, simil
                 width={400}
                 height={400}
                 className="rounded-lg"
-		priority={false}
+                priority={false}
               />
             </div>
           </div>
@@ -60,7 +57,7 @@ export default function ProductClient({ product, price, uom, manufacturer, simil
             <div className="align-middle font-regular">
               <div className="md:mt-14 mb-4 sm:mt-4 text-2xl">
                 <p>
-                  <b>Цена:</b> {price !== null ? `${price}` : "Загрузка..."}
+                  <b>Цена:</b> {price !== null ? `${price} BYN` : "Загрузка..."}
                 </p>
                 <p>
                   <b>Количество:</b>{" "}
@@ -144,3 +141,4 @@ export default function ProductClient({ product, price, uom, manufacturer, simil
     </div>
   );
 }
+
