@@ -22,7 +22,7 @@ const MobileSearchPopup = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50">
+    <header className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50">
       <div className="bg-white w-full h-full rounded-tl-lg rounded-tr-lg relative">
         {/* Close Button */}
         <button
@@ -81,7 +81,7 @@ const MobileSearchPopup = ({
           )}
         </div>
       </div>
-    </div>
+    </header>
   );
 };
 
@@ -161,7 +161,7 @@ const Header = () => {
   return (
     <div className="bg-brown text-black font-regular flex justify-between items-center mx-auto px-8 lg:px-32 py-4 border-b border-gray-300">
       <Link component={NextLink} href="/" className="flex items-center pr-8">
-        <Image src="/Logo.png" alt="Logo" width={100} height={50} priority />
+        <Image src="/lsk-logo white.svg" alt="Logo" width={125} height={125} priority />
       </Link>
 
       {/* Desktop Search Bar */}

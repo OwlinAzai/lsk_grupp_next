@@ -5,6 +5,7 @@ import { Provider } from "react-redux";
 import { store } from "../store";
 import { SearchProvider } from "../context/searchContext";
 import Header from "./Header";
+import Footer from "./Footer";
 import Breadcrumbs from "./breadcrumbs";
 
 export default function ClientWrapper({ children }: { children: React.ReactNode }) {
@@ -14,6 +15,7 @@ export default function ClientWrapper({ children }: { children: React.ReactNode 
         <Header />
         <Breadcrumbs />
         {children}
+	<Footer />
       </SearchProvider>
     </Provider>
   );

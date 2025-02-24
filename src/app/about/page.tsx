@@ -1,193 +1,168 @@
-export default function About() {
-  return (
-    <>
-      <div className="flex flex-cols-2 font-sans align-middle">
-        <title>О нас</title>
-        {/* Main Content */}
-        <div className="p-6 mb-[22px] shadow-xl rounded-lg px-[1rem] sm:pr-4 sm:mr-4 sm:ml-4 lg:ml-32 lg:mr-32 bg-white">
-          <div>
-            <h1 className="text-4xl text-center font-medium">О нас</h1>
-            <div className="flex items-center bg-orange-500 h-1 w-[130px] m-auto mt-2 mb-5 font-light rounded-md" />
-            <p className="align-center text-justify font-light text-xl">
-              Наша организация предлагает Вам качественную продукцию от
-              зарекомендовавших себя производителей по доступным ценам. Возможен
-              наличный и безналичный расчёт. Опт и розница. Приглашаем к
-              сотрудничеству. Всегда рады Вам!
-            </p>
+import { supabase } from "@/lib/supabaseClient"
+
+export default async function About() {
+  try {
+    // Fetch company info
+    const { data: info, error: infoError } = await supabase
+      .from("company_info")
+      .select("*")
+      .single();
+
+    if (infoError) {
+      console.error("Ошибка загрузки данных:", infoError.message);
+      return <div>Ошибка загрузки продукта</div>;
+    }
+
+    return (
+      <>
+      <div className="">
+      <div className="pb-5 mx-auto sm:ml-4 pl-4 pr-4 sm:mr-4 lg:ml-32 lg:mr-32 mt-4 mb-4 shadow-xl rounded-lg px-4 bg-white overflow-clip">
+        <div className="font-sans align-middle">
+          <title>О нас</title>
+          <div className="mb-4 w-full" id="about-section">
+            <h2 className="text-2xl font-regular m-0 p-0 -mx-4 mt-2 mb-2 px-4 py-3 text-white bg-brown">
+              Информация о компании:
+            </h2>
+            <table className="table-auto w-full border-collapse font-regular">
+              <thead className="font-regular border-b-1">
+                <tr className="border-b">
+                  <th className="pt-2 text-left text-2xl font-light">Параметр</th>
+                  <th className="pt-2 text-right text-2xl font-light">Значение</th>
+                </tr>
+              </thead>
+              <tbody className="border-0 font-light text-xl">
+                {Array.isArray(info.company_info) && info.company_info.length > 0 ? (
+                  info.company_info.map((attribute, index) => (
+                    <tr key={index}>
+                      <td className="text-left border-b pt-2">
+                        {attribute.name || "Не указано"}
+                      </td>
+                      {/* You need to add the value for the second column */}
+                      <td className="text-right border-b pt-2">
+                        {attribute.value || "Не указано"}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={2} className="px-4 py-2 border border-gray-300">
+                      Характеристики не найдены
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
-          <div>
-            <h1 className="text-3xl text-center font-sans mt-5 mb-5">
-              Информация о компании
-            </h1>
-            <div className="flex flex-row justify-between border-b-2 border-black border-opacity-30">
-              <p className="align-center text-left font-light text-xl ">
-                Название
-              </p>
-              <p className="align-center text-right font-light text-xl">
-                ООО {`"`}ЛСК-групп{`"`}
-              </p>
-            </div>
-            <div className="flex flex-row justify-between border-b-2 border-black border-opacity-30">
-              <p className="align-center text-left font-light text-xl ">
-                Тип компании
-              </p>
-              <p className="align-center text-right font-light text-xl">
-                Торговая компания
-              </p>
-            </div>
-            <div className="flex flex-row justify-between border-b-2 border-black border-opacity-30">
-              <p className="align-center text-left font-light text-xl ">
-                Бренды
-              </p>
-              <p className="align-center text-right font-light text-xl">БЦК</p>
-            </div>
-            <div className="flex flex-row justify-between border-b-2 border-black border-opacity-30">
-              <p className="align-center text-left font-light text-xl ">
-                Количество сотрудников
-              </p>
-              <p className="align-center text-right font-light text-xl">
-                5-10 человек
-              </p>
-            </div>
+	  <div className="mb-4 w-full">
+            <h2 className="text-2xl font-regular m-0 p-0 -mx-4 mt-2 mb-2 px-4 py-3 text-white bg-brown">
+	    	Организационно-правовая форма и капитал
+            </h2>
+            <table className="table-auto w-full border-collapse font-regular">
+              <thead className="font-regular border-b-1">
+                <tr className="border-b">
+                  <th className="pt-2 text-left text-2xl font-light">Параметр</th>
+                  <th className="pt-2 text-right text-2xl font-light">Значение</th>
+                </tr>
+              </thead>
+              <tbody className="border-0 font-light text-xl">
+                {Array.isArray(info.organizational_and_legal_form) && info.organizational_and_legal_form.length > 0 ? (
+                  info.organizational_and_legal_form.map((attribute, index) => (
+                    <tr key={index}>
+                      <td className="text-left border-b pt-2">
+                        {attribute.name || "Не указано"}
+                      </td>
+                      {/* You need to add the value for the second column */}
+                      <td className="text-right border-b pt-2">
+                        {attribute.value || "Не указано"}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={2} className="px-4 py-2 border border-gray-300">
+                      Характеристики не найдены
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
-          <div>
-            <h1 className="text-3xl text-center font-sans mt-5 mb-5">
-              Организационно-правовая форма
-            </h1>
-            <div className="flex flex-row justify-between border-b-2 border-black border-opacity-30">
-              <p className="align-center text-left font-light text-xl ">
-                Год основания
-              </p>
-              <p className="align-center text-right font-light text-xl">2020</p>
-            </div>
-            <div className="flex flex-row justify-between border-b-2 border-black border-opacity-30">
-              <p className="align-center text-left font-light text-xl ">
-                Организационно-правовая форма
-              </p>
-              <p className="align-center text-right font-light text-xl">
-                Общество с ограниченной ответственностью
-              </p>
-            </div>
+	  <div className="mb-4 w-full" id="contacts-section">
+            <h2 className="text-2xl font-regular m-0 p-0 -mx-4 mt-2 mb-2 px-4 py-3 text-white bg-brown">
+	    	Контакты
+            </h2>
+            <table className="table-auto w-full border-collapse font-regular">
+              <thead className="font-regular border-b-1">
+                <tr className="border-b">
+                  <th className="pt-2 text-left text-2xl font-light">Параметр</th>
+                  <th className="pt-2 text-right text-2xl font-light">Значение</th>
+                </tr>
+              </thead>
+              <tbody className="border-0 font-light text-xl">
+                {Array.isArray(info.contact_info) && info.contact_info.length > 0 ? (
+                  info.contact_info.map((attribute, index) => (
+                    <tr key={index}>
+                      <td className="text-left border-b pt-2">
+                        {attribute.name || "Не указано"}
+                      </td>
+                      {/* You need to add the value for the second column */}
+                      <td className="text-right border-b pt-2">
+                        {attribute.value || "Не указано"}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={2} className="px-4 py-2 border border-gray-300">
+                      Характеристики не найдены
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
-          <div>
-            <h1 className="text-3xl text-center font-sans mt-5 mb-5">
-              Контактная информация
-            </h1>
-            <div className="flex flex-row justify-between border-b-2 border-black border-opacity-30">
-              <p className="align-center text-left font-light text-xl ">
-                Компания
-              </p>
-              <p className="align-center text-right font-light text-xl">
-                ООО “ЛСК-групп”
-              </p>
-            </div>
-            <div className="flex flex-row justify-between border-b-2 border-black border-opacity-30">
-              <p className="align-center text-left font-light text-xl ">
-                Рабочий телефон
-              </p>
-              <p className="align-center text-right font-light text-xl">
-                +375 (17) 243-91-59
-              </p>
-            </div>
-            <div className="flex flex-row justify-between border-b-2 border-black border-opacity-30">
-              <p className="align-center text-left font-light text-xl ">
-                Василий Николаевич (МТС)
-              </p>
-              <p className="align-center text-right font-light text-xl">
-                +375 (29) 278-23-43
-              </p>
-            </div>
-            <div className="flex flex-row justify-between border-b-2 border-black border-opacity-30">
-              <p className="align-center text-left font-light text-xl ">
-                Игорь Болеславович (А1)
-              </p>
-              <p className="align-center text-right font-light text-xl">
-                +375 (29) 173-06-54
-              </p>
-            </div>
-            <div className="flex flex-row justify-between border-b-2 border-black border-opacity-30">
-              <p className="align-center text-left font-light text-xl ">
-                Контактное лицо
-              </p>
-              <p className="align-center text-right font-light text-xl">
-                Германович Игорь Болеславович
-              </p>
-            </div>
-          </div>
-          <div>
-            <h1 className="text-3xl text-center font-sans mt-5 mb-5">
-              Информация для покупателя
-            </h1>
-            <div className="flex flex-row justify-between border-b-2 border-black border-opacity-30">
-              <p className="align-center text-left font-light text-xl">
-                ООО “ЛСК-групп”
-              </p>
-            </div>
-            <div className="flex flex-row justify-between border-b-2 border-black border-opacity-30">
-              <p className="align-center text-left font-light text-xl ">
-                Адрес
-              </p>
-              <p className="align-center text-right font-light text-xl">
-                ул. Селицкого 23, Минск, Беларусь
-              </p>
-            </div>
-            <div className="flex flex-row justify-between border-b-2 border-black border-opacity-30">
-              <p className="align-center text-left font-light text-xl ">
-                Дата регистрации в Торговом реестре/Реестре бытовых услуг
-              </p>
-              <p className="align-center text-right font-light text-xl">
-                28.02.2020
-              </p>
-            </div>
-            <div className="flex flex-row justify-between border-b-2 border-black border-opacity-30">
-              <p className="align-center text-left font-light text-xl ">
-                Номер в Торговом реестре/Реестре бытовых услуг
-              </p>
-              <p className="align-center text-right font-light text-xl">
-                0160895, Республика Беларусь
-              </p>
-            </div>
-            <div className="flex flex-row justify-between border-b-2 border-black border-opacity-30">
-              <p className="align-center text-left font-light text-xl ">УНП</p>
-              <p className="align-center text-right font-light text-xl">
-                591033985
-              </p>
-            </div>
-            <div className="flex flex-row justify-between border-b-2 border-black border-opacity-30">
-              <p className="align-center text-left font-light text-xl ">
-                Регистрационный орган
-              </p>
-              <p className="align-center text-right font-light text-xl">
-                Гродненский горисполком
-              </p>
-            </div>
-            <div className="flex flex-row justify-between border-b-2 border-black border-opacity-30">
-              <p className="align-center text-left font-light text-xl ">
-                Местонахождение книги замечаний и предложений
-              </p>
-              <p className="align-center text-right font-light text-xl">
-                г. Гродно, ул. Озёрское шоссе, 14а
-              </p>
-            </div>
-            <div className="flex flex-row justify-between border-b-2 border-black border-opacity-30">
-              <p className="align-center text-left font-light text-xl ">
-                Режим работы
-              </p>
-              <p className="align-center text-right font-light text-xl">
-                ПН-ПТ 08:30-17:00
-              </p>
-            </div>
-            <div className="flex flex-row justify-between border-b-2 border-black border-opacity-30">
-              <p className="align-center text-left font-light text-xl ">
-                EMAIL
-              </p>
-              <p className="align-center font-light text-xl text-right">
-                lskgruppinfo@gmail.com
-              </p>
-            </div>
+	   <div className="w-full" id="legal-section">
+            <h2 className="text-2xl font-regular m-0 p-0 -mx-4 mt-2 mb-2 px-4 py-3 text-white bg-brown">
+	    	Информация для покупателя	
+	    </h2>
+            <table className="table-auto w-full border-collapse font-regular">
+              <thead className="font-regular border-b-1">
+                <tr className="border-b">
+                  <th className="pt-2 text-left text-2xl font-light">Параметр</th>
+                  <th className="pt-2 text-right text-2xl font-light">Значение</th>
+                </tr>
+              </thead>
+              <tbody className="border-0 font-light text-xl">
+                {Array.isArray(info.info_for_customers) && info.info_for_customers.length > 0 ? (
+                  info.info_for_customers.map((attribute, index) => (
+                    <tr key={index}>
+                      <td className="text-left border-b pt-2">
+                        {attribute.name || "Не указано"}
+                      </td>
+                      {/* You need to add the value for the second column */}
+                      <td className="text-right border-b pt-2">
+                        {attribute.value || "Не указано"}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={2} className="px-4 py-2 border border-gray-300">
+                      Характеристики не найдены
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
-      </div>
-    </>
-  );
+	</div>
+	</div>
+      </>
+    );
+  } catch (err) {
+    console.error("Произошла ошибка при загрузке данных:", err);
+    return <div>Ошибка загрузки данных</div>;
+  }
 }
+

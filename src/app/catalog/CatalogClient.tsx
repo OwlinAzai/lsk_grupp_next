@@ -97,7 +97,7 @@ export default function CatalogClient({ initialProducts, categories }) {
             placeholder="Search the catalog"
             className="w-full outline-none bg-white text-gray-600 text-base border-2 h-10 pl-2 pr-2 rounded-lg focus:border-orange-400"
             value={catalogSearchQuery}
-            onChange={(e) => debounceSearch(e.target.value)} // Использование debounced функции
+            onChange={(e) => setCatalogSearchQuery(e.target.value)} // Использование debounced функции
           />
         </div>
         <div className="mb-4">

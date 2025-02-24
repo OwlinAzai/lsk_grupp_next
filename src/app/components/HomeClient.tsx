@@ -1,4 +1,5 @@
-"use client";
+// src/app/components/HomeClient.tsx
+"use client";  // Указываем, что компонент клиентский
 
 import NextLink from "next/link";
 import Image from "next/image";

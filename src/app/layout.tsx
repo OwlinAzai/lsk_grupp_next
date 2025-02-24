@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Oswald } from "next/font/google";
 import "./globals.css";
 import ClientWrapper from "./components/ClientWrapper";
+import Footer from "./components/Footer";
 
 const oswald = Oswald({
   variable: "--font-oswald",

@@ -190,22 +190,24 @@ const Contact: FC = () => {
                       Price: {item?.price || "Please check"} {item?.currency || ""}
                     </p>
                     {/* Quantity controls */}
-                    <div className="flex flex-row justify-between items-center mt-2">
-                      <button
-                        type="button"
-                        className="text-white bg-orange-500 hover:bg-orange-600 rounded-md px-3 py-1"
-                        onClick={() => updateQuantity(item.id, "decrement")}
-                      >
-                        -
-                      </button>
-                      <span className="font-semibold">{item.quantity}</span>
-                      <button
-                        type="button"
-                        className="text-white bg-orange-500 hover:bg-orange-600 rounded-md px-3 py-1"
-                        onClick={() => updateQuantity(item.id, "increment")}
-                      >
-                        +
-                      </button>
+                    <div className="flex flex-row items-center mt-2 justify-between">
+		    	<div className="">
+                      		<button
+                        		type="button"
+                        		className="text-white bg-orange-500 hover:bg-orange-600 rounded-md px-3 py-1"
+                        		onClick={() => updateQuantity(item.id, "decrement")}
+                      		>
+                        		-
+                      		</button>
+                      		<span className="font-semibold pl-3 pr-3">{item.quantity}</span>
+                      		<button
+                        		type="button"
+                        		className="text-white bg-orange-500 hover:bg-orange-600 rounded-md px-3 py-1"
+                        		onClick={() => updateQuantity(item.id, "increment")}
+                      		>
+                        		+
+                      		</button>
+			</div>
                       <button
                         type="button"
                         className="text-white bg-red-500 hover:bg-red-600 rounded-md px-3 py-1"
