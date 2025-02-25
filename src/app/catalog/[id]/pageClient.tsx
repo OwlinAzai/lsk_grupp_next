@@ -3,13 +3,15 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux"; // импортируем useDispatch
 import { addToCart } from "../../store/cartSlice"; // импортируем действие addToCart
-import NextLink from "next/link";
+import { useRouter } from "next/navigation"; // импортируем useRouter
 import Image from "next/image";
 import SimilarProducts from "./similarProductsClient";
 
 export default function ProductClient({ product, price, uom, manufacturer, similarProducts }) {
   const [error, setError] = useState(null);
-  const dispatch = useDispatch(); // создаем dispatch
+  const dispatch = useDispatch(); // создаем useDispatch
+  const router = useRouter(); // создаем useRouter
+  const searchParams = new URLSearchParams(window.location.search);
 
   const handleAddToCart = () => {
     try {
@@ -30,6 +32,14 @@ export default function ProductClient({ product, price, uom, manufacturer, simil
       console.error("Error adding to cart:", error);
       setError("Ошибка при добавлении в корзину.");
     }
+  };
+
+  const handleReturnToCatalog = () => {
+    // Удаляем параметр `productId` из URL
+    searchParams.delete("productId");
+
+    // Переходим на страницу каталога с оставшимися параметрами
+    router.push(`/catalog?${searchParams.toString()}`);
   };
 
   if (!product) return <div>Продукт не найден</div>;
@@ -91,11 +101,12 @@ export default function ProductClient({ product, price, uom, manufacturer, simil
               >
                 Добавить в корзину
               </button>
-              <NextLink href="/catalog">
-                <button className="bg-orange-500 hover:bg-orange-400 text-white font-bold py-2 px-4 hover:border-orange-500 rounded mt-2">
-                  Вернуться
-                </button>
-              </NextLink>
+              <button
+                className="bg-orange-500 hover:bg-orange-400 text-white font-bold py-2 px-4 hover:border-orange-500 rounded mt-2"
+                onClick={handleReturnToCatalog}
+              >
+                Вернуться
+              </button>
             </div>
           </div>
         </div>
@@ -141,4 +152,3 @@ export default function ProductClient({ product, price, uom, manufacturer, simil
     </div>
   );
 }
-

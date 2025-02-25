@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { supabase } from "../../lib/supabaseClient.js";
+import { supabase } from "@/lib/supabaseClient";
+import { useSearchParams, useRouter } from "next/navigation";
 
-export default function FiltersClient({ onFilterChange }) {
+export default function FiltersClient({ categories, onFilterChange }) {
   const [selectedType, setSelectedType] = useState("");
   const [selectedManufacturers, setSelectedManufacturers] = useState([]);
   const [minPrice, setMinPrice] = useState("");
@@ -12,7 +13,23 @@ export default function FiltersClient({ onFilterChange }) {
   const [productTypes, setProductTypes] = useState([]);
   const [manufacturers, setManufacturers] = useState([]);
 
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Инициализация фильтров из URL
   useEffect(() => {
+    const categoryIds = searchParams.get("categoryIds")?.split(",") || [];
+    const manufacturers = searchParams.get("manufacturers")?.split(",") || [];
+    const minPrice = searchParams.get("minPrice") || "";
+    const maxPrice = searchParams.get("maxPrice") || "";
+    const availability = searchParams.get("availability") || "all";
+
+    setSelectedType(categoryIds[0] || "");
+    setSelectedManufacturers(manufacturers);
+    setMinPrice(minPrice);
+    setMaxPrice(maxPrice);
+    setAvailability(availability);
+
     const fetchData = async () => {
       const { data: typesData } = await supabase.from("product_types").select("*");
       setProductTypes(typesData || []);
@@ -21,8 +38,46 @@ export default function FiltersClient({ onFilterChange }) {
       setManufacturers(manufacturersData || []);
     };
     fetchData();
-  }, []);
+  }, [searchParams]);
 
+  // Обновление URL при изменении фильтров
+  const updateFiltersInUrl = (newFilters) => {
+    const params = new URLSearchParams(searchParams);
+
+    if (newFilters.categoryIds.length > 0) {
+      params.set("categoryIds", newFilters.categoryIds.join(","));
+    } else {
+      params.delete("categoryIds");
+    }
+
+    if (newFilters.manufacturers.length > 0) {
+      params.set("manufacturers", newFilters.manufacturers.join(","));
+    } else {
+      params.delete("manufacturers");
+    }
+
+    if (newFilters.minPrice) {
+      params.set("minPrice", newFilters.minPrice);
+    } else {
+      params.delete("minPrice");
+    }
+
+    if (newFilters.maxPrice) {
+      params.set("maxPrice", newFilters.maxPrice);
+    } else {
+      params.delete("maxPrice");
+    }
+
+    if (newFilters.availability !== "all") {
+      params.set("availability", newFilters.availability);
+    } else {
+      params.delete("availability");
+    }
+
+    router.replace(`?${params.toString()}`, { scroll: false });
+  };
+
+  // Обработчик изменения категории
   const handleTypeChange = async (event) => {
     const selectedCategoryId = event.target.value;
     setSelectedType(selectedCategoryId);
@@ -37,9 +92,19 @@ export default function FiltersClient({ onFilterChange }) {
       ? [selectedCategoryId, ...childCategories.map((c) => c.id)]
       : [selectedCategoryId];
 
-    onFilterChange({ categoryIds, manufacturers: [], minPrice, maxPrice, availability });
+    const newFilters = {
+      categoryIds,
+      manufacturers: [],
+      minPrice,
+      maxPrice,
+      availability,
+    };
+
+    updateFiltersInUrl(newFilters);
+    onFilterChange(newFilters);
   };
 
+  // Обработчик изменения производителей
   const handleManufacturerChange = (event) => {
     const manufacturerId = event.target.value;
     const isChecked = event.target.checked;
@@ -49,26 +114,65 @@ export default function FiltersClient({ onFilterChange }) {
       ? [...selectedManufacturers, id]
       : selectedManufacturers.filter((selectedId) => selectedId !== id);
 
+    const newFilters = {
+      categoryIds: selectedType ? [selectedType] : [],
+      manufacturers: newManufacturers,
+      minPrice,
+      maxPrice,
+      availability,
+    };
+
     setSelectedManufacturers(newManufacturers);
-    onFilterChange({ categoryIds: selectedType ? [selectedType] : [], manufacturers: newManufacturers, minPrice, maxPrice, availability });
+    updateFiltersInUrl(newFilters);
+    onFilterChange(newFilters);
   };
 
+  // Обработчик изменения минимальной цены
   const handleMinPriceChange = (event) => {
     const value = event.target.value;
+    const newFilters = {
+      categoryIds: selectedType ? [selectedType] : [],
+      manufacturers: selectedManufacturers,
+      minPrice: value,
+      maxPrice,
+      availability,
+    };
+
     setMinPrice(value);
-    onFilterChange({ categoryIds: selectedType ? [selectedType] : [], manufacturers: selectedManufacturers, minPrice: value, maxPrice, availability });
+    updateFiltersInUrl(newFilters);
+    onFilterChange(newFilters);
   };
 
+  // Обработчик изменения максимальной цены
   const handleMaxPriceChange = (event) => {
     const value = event.target.value;
+    const newFilters = {
+      categoryIds: selectedType ? [selectedType] : [],
+      manufacturers: selectedManufacturers,
+      minPrice,
+      maxPrice: value,
+      availability,
+    };
+
     setMaxPrice(value);
-    onFilterChange({ categoryIds: selectedType ? [selectedType] : [], manufacturers: selectedManufacturers, minPrice, maxPrice: value, availability });
+    updateFiltersInUrl(newFilters);
+    onFilterChange(newFilters);
   };
 
+  // Обработчик изменения наличия
   const handleAvailabilityChange = (event) => {
     const value = event.target.value;
+    const newFilters = {
+      categoryIds: selectedType ? [selectedType] : [],
+      manufacturers: selectedManufacturers,
+      minPrice,
+      maxPrice,
+      availability: value,
+    };
+
     setAvailability(value);
-    onFilterChange({ categoryIds: selectedType ? [selectedType] : [], manufacturers: selectedManufacturers, minPrice, maxPrice, availability: value });
+    updateFiltersInUrl(newFilters);
+    onFilterChange(newFilters);
   };
 
   return (
