@@ -8,16 +8,21 @@ import Header from "./Header";
 import Footer from "./Footer";
 import Breadcrumbs from "./breadcrumbs";
 
-export default function ClientWrapper({ children }: { children: React.ReactNode }) {
+type ClientWrapperProps = {
+  children: React.ReactNode;
+  params: { slug?: string[] }; // Добавьте params в пропсы
+};
+
+export default function ClientWrapper({ children, params }: ClientWrapperProps) {
+  const pathname = `/${params?.slug?.join("/") || ""}`;
   return (
     <Provider store={store}>
       <SearchProvider>
         <Header />
-        <Breadcrumbs />
+        <Breadcrumbs /> {/* Передайте params в Breadcrumbs */}
         {children}
-	<Footer />
+        <Footer />
       </SearchProvider>
     </Provider>
   );
 }
-

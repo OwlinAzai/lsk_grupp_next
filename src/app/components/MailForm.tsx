@@ -227,7 +227,7 @@ const Contact: FC = () => {
         <div className="pl-2 pr-2">
           <div className="flex justify-between">
             <h2 className="mb-3 text-2xl font-bold text-gray-700">Total:</h2>
-            <p>{totalPrice}</p>
+            <p className="text-2xl font-bold text-gray-700">{totalPrice}</p>
           </div>
           <button
             type="submit"
