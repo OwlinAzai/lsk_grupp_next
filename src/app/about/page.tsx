@@ -15,7 +15,6 @@ export default async function About() {
 
     return (
       <>
-      <div className="">
       <div className="pb-5 mx-auto sm:ml-4 pl-4 pr-4 sm:mr-4 lg:ml-32 lg:mr-32 mt-4 mb-4 shadow-xl rounded-lg px-4 bg-white overflow-clip">
         <div className="font-sans align-middle">
           <title>О нас</title>
@@ -156,8 +155,7 @@ export default async function About() {
             </table>
           </div>
         </div>
-	</div>
-	</div>
+      </div>
       </>
     );
   } catch (err) {

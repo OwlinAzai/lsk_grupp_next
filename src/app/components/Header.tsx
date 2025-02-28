@@ -159,7 +159,7 @@ const Header = () => {
   };
 
   return (
-    <div className="bg-brown text-black font-regular flex justify-between items-center mx-auto px-8 lg:px-32 py-4 border-b border-gray-300">
+    <div className="bg-brown text-black font-regular flex justify-between items-center mx-auto px-8 lg:px-32 py-4">
       <Link component={NextLink} href="/" className="flex items-center pr-8">
         <Image src="/lsk-logo white.svg" alt="Logo" width={125} height={125} priority />
       </Link>
