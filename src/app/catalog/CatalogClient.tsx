@@ -185,7 +185,7 @@ export default function CatalogClient({ initialProducts, categories }) {
               >
                 <div className="w-full mt-5 mb-3 drop-shadow-2xl rounded-lg px-4 py-4 bg-white hover:bg-[#fdf3e1] sm:flex sm:justify-between">
                   <div className="flex pr-3 items-center">
-                    <Image src={product.imageURL || "/default-image.png"} alt={product.productName} width={100} height={100} />
+                    <Image src={product.imageURL || "/default-image.png"} alt={product.productName} width={100} height={100}/>
                   </div>
                   <div className="wrapper w-1 bg-gradient-to-b from-[#EC4700] to-[#FCCA27] rounded-full sm:h-[170px]"></div>
                   <div className="flex-1 ml-4 mt-2">
