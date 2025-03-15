@@ -1,7 +1,11 @@
 import { FC, useState, useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { addToCart, removeFromCart, updateCartQuantity } from "@/app/store/cartSlice"; // Added updateCartQuantity action
+import {
+  addToCart,
+  removeFromCart,
+  updateCartQuantity,
+} from "@/app/store/cartSlice"; // Added updateCartQuantity action
 import { sendEmail } from "@/app/utils/send-email";
 import Image from "next/image";
 
@@ -28,7 +32,7 @@ const Contact: FC = () => {
   } = useForm<FormData>();
 
   useEffect(() => {
-    setValue("cart", JSON.stringify(cart)); 
+    setValue("cart", JSON.stringify(cart));
   }, [cart, setValue]);
 
   const addToCartHandler = (product: any) => {
@@ -39,21 +43,22 @@ const Contact: FC = () => {
     dispatch(removeFromCart(id));
   };
 
- const updateQuantity = (id: string, action: "increment" | "decrement") => {
-  const item = cart.find((item: any) => item.id === id);
-  if (item) {
-    const newQuantity = action === "increment" ? item.quantity + 1 : item.quantity - 1;
-    if (newQuantity > 0) {
-      dispatch(updateCartQuantity({ id, quantity: newQuantity }));
+  const updateQuantity = (id: string, action: "increment" | "decrement") => {
+    const item = cart.find((item: any) => item.id === id);
+    if (item) {
+      const newQuantity =
+        action === "increment" ? item.quantity + 1 : item.quantity - 1;
+      if (newQuantity > 0) {
+        dispatch(updateCartQuantity({ id, quantity: newQuantity }));
+      }
     }
-  }
-};
+  };
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     if (isFormSubmitting) return;
     setIsFormSubmitting(true);
 
-    const updatedCart = cart.map(item => ({
+    const updatedCart = cart.map((item) => ({
       ...item,
       price: item.price === "Цена не найдена" ? 0 : item.price,
     }));
@@ -87,9 +92,9 @@ const Contact: FC = () => {
         className="pt-6 pb-6 mb-4 mx-auto pl-4 pr-4 sm:mr-4 sm:ml-4 lg:ml-32 lg:mr-32 mt-4 shadow-xl rounded-lg px-4 bg-white"
       >
         <h1 className="text-4xl font-regular text-center mb-4">Contact Us</h1>
-        
+
         {/* Form fields */}
-       <div className="mb-5 pl-2 pr-2">
+        <div className="mb-5 pl-2 pr-2">
           <label
             htmlFor="name"
             className="mb-2 block text-xl font-sans text-gray-700"
@@ -147,10 +152,12 @@ const Contact: FC = () => {
             className="w-full rounded-md border-2 border-zinc-500 bg-white py-3 px-4 text-base font-medium text-gray-700 outline-none focus:border-2 focus:border-orange-500"
             {...register("message", { required: true })}
           ></textarea>
-        </div> 
+        </div>
         {/* Cart display */}
         <div className="mb-5 pl-2 pr-2">
-          <label className="mb-2 block text-xl font-sans text-gray-700">Cart:</label>
+          <label className="mb-2 block text-xl font-sans text-gray-700">
+            Cart:
+          </label>
           <textarea
             readOnly
             className="w-full rounded-md border-2 border-zinc-500 bg-white py-3 px-4 text-base font-medium text-gray-700 outline-none focus:border-2 focus:border-orange-500"
@@ -179,35 +186,42 @@ const Contact: FC = () => {
                         </div>
                       )}
                       <div className="w-full md:w-5/6 ml-0 md:ml-4">
-                        <h1 className="mt-2 text-xl font-semiBold">{item.productName}</h1>
-                        <p className="mt-4 text-l font-semiBold">Description:</p>
+                        <h1 className="mt-2 text-xl font-semiBold">
+                          {item.productName}
+                        </h1>
+                        <p className="mt-4 text-l font-semiBold">
+                          Description:
+                        </p>
                         <p className="mt-4 text-sm font-sans text-gray-600 w-full break-words overflow-hidden text-ellipsis">
                           {item.description}
                         </p>
                       </div>
                     </div>
                     <p className="font-semibold font-sans mt-4">
-                      Price: {item?.price || "Please check"} {item?.currency || ""}
+                      Price: {item?.price || "Please check"}{" "}
+                      {item?.currency || ""}
                     </p>
                     {/* Quantity controls */}
                     <div className="flex flex-row items-center mt-2 justify-between">
-		    	<div className="">
-                      		<button
-                        		type="button"
-                        		className="text-white bg-orange-500 hover:bg-orange-600 rounded-md px-3 py-1"
-                        		onClick={() => updateQuantity(item.id, "decrement")}
-                      		>
-                        		-
-                      		</button>
-                      		<span className="font-semibold pl-3 pr-3">{item.quantity}</span>
-                      		<button
-                        		type="button"
-                        		className="text-white bg-orange-500 hover:bg-orange-600 rounded-md px-3 py-1"
-                        		onClick={() => updateQuantity(item.id, "increment")}
-                      		>
-                        		+
-                      		</button>
-			</div>
+                      <div className="">
+                        <button
+                          type="button"
+                          className="text-white bg-orange-500 hover:bg-orange-600 rounded-md px-3 py-1"
+                          onClick={() => updateQuantity(item.id, "decrement")}
+                        >
+                          -
+                        </button>
+                        <span className="font-semibold pl-3 pr-3">
+                          {item.quantity}
+                        </span>
+                        <button
+                          type="button"
+                          className="text-white bg-orange-500 hover:bg-orange-600 rounded-md px-3 py-1"
+                          onClick={() => updateQuantity(item.id, "increment")}
+                        >
+                          +
+                        </button>
+                      </div>
                       <button
                         type="button"
                         className="text-white bg-red-500 hover:bg-red-600 rounded-md px-3 py-1"
@@ -281,4 +295,3 @@ const Contact: FC = () => {
 };
 
 export default Contact;
-

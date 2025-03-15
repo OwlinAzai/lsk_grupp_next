@@ -20,7 +20,21 @@ export default async function HomeServer() {
       })
     );
 
-    return <HomeClient products={detailedProducts} />;
+    // Получаем данные для HomeInfo
+    const { data: homeInfo, error: homeInfoError } = await supabase
+      .from("main_page_info")
+      .select("*")
+      .single();
+
+    if (homeInfoError)
+      console.error("Ошибка загрузки main_page_info:", homeInfoError.message);
+
+    return (
+      <HomeClient
+        products={detailedProducts}
+        homeInfo={homeInfo?.text || null}
+      />
+    );
   } catch (error) {
     return <div>Ошибка загрузки данных: {error.message}</div>;
   }
@@ -58,4 +72,3 @@ async function fetchProductType(productTypeId: number | null) {
     .single();
   return error ? "Тип продукта не найден" : data.name;
 }
-
