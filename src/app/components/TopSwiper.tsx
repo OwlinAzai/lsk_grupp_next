@@ -47,54 +47,49 @@ export default function TopSwiper({ initialImages }: TopSwiperProps) {
   }, []);
 
   return (
-    <div className="swiper-container relative">
-      <div className="absolute top-[40%] left-1/2 transform -translate-x-1/2 text-center z-50 w-full px-4">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
-          Строительные материалы
-        </h1>
-        <p className="text-lg sm:text-xl md:text-2xl text-white mb-4">
-          Строительные материалы на <span className="font-bold">X%</span>{" "}
-          дешевле, чем на рынке
-        </p>
-        <button className="bg-white text-[#330100] py-2 px-6 rounded-full font-semibold hover:bg-opacity-90 transition">
-          Оставить заявку
-        </button>
-      </div>
+  <div className="swiper-container relative">
+    <div className="absolute top-[40%] left-1/2 transform -translate-x-1/2 text-center z-50 w-full px-4">
+      <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
+        Строительные материалы
+      </h1>
+      <p className="text-lg sm:text-xl md:text-2xl text-white mb-4">
+        Строительные материалы на <span className="font-bold">X%</span>{" "}
+        дешевле, чем на рынке
+      </p>
+      <button className="bg-white text-[#330100] py-2 px-6 rounded-full font-semibold hover:bg-opacity-90 transition">
+        Оставить заявку
+      </button>
+    </div>
 
-      <Swiper
+    <Swiper
         modules={[Autoplay, Pagination, Navigation]}
         spaceBetween={30}
         slidesPerView={1}
         autoplay={{ delay: 6000, disableOnInteraction: false }}
-        navigation={{
-          nextEl: ".swiper-button-next-top",
-          prevEl: ".swiper-button-prev-top",
-        }}
         loop={true}
-        onSwiper={(swiper) => (topSwiperRef.current = swiper)}
-      >
-        {images.length > 0 ? (
+    >
+      {images.length > 0 ? (
           images.map((imageUrl, index) => (
-            <SwiperSlide key={index}>
-              <div className="relative bg-cover bg-center h-screen">
-                <Image
-                  src={imageUrl}
-                  alt={`Image ${index}`}
-                  layout="fill"
-                  objectFit="cover"
-                  className="absolute inset-0"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#330100] to-[#4D1B00] opacity-70"></div>
-              </div>
-            </SwiperSlide>
+              <SwiperSlide key={index}>
+                <div className="relative bg-cover bg-center h-screen">
+                  <Image
+                      src={imageUrl}
+                      alt={`Image ${index}`}
+                      layout="fill"
+                      objectFit="cover"
+                      className="absolute inset-0"
+                      loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#330100] to-[#4D1B00] opacity-70"></div>
+                </div>
+              </SwiperSlide>
           ))
-        ) : (
+      ) : (
           <SwiperSlide>
             <p>Нет изображений для отображения.</p>
           </SwiperSlide>
-        )}
-      </Swiper>
-    </div>
+      )}
+    </Swiper>
+  </div>
   );
 }

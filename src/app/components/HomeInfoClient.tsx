@@ -18,7 +18,7 @@ const HomeInfoClient: React.FC<HomeInfoClientProps> = ({ info }) => {
   return (
     <div className="bg-gray-200 py-12 px-4 sm:px-8 md:px-12 lg:px-24 xl:px-36">
       {/* Заголовок */}
-      <h1 className="text-4xl font-bold text-center text-black mb-8 relative underline underline-offset-8 decoration-orange-500">
+      <h1 className="text-4xl font-bold text-center text-black mb-12 relative underline underline-offset-8 decoration-orange-500">
         Кто мы и что предлагаем?
       </h1>
 
@@ -39,7 +39,7 @@ const HomeInfoClient: React.FC<HomeInfoClientProps> = ({ info }) => {
                   alt="Company Info"
                   width={534}
                   height={356}
-                  className="w-full h-auto object-cover rounded-3xl shadow-lg"
+                  className="w-full h-auto object-cover rounded-3xl drop-shadow-black drop-shadow-2xl"
                 />
               </div>
             ) : (
