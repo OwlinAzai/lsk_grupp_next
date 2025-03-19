@@ -51,17 +51,17 @@ export default function BottomSwiper({ products }: { products: Product[] }) {
                                       height={150}
                                       className="mx-auto rounded-lg"
                                   />
-                                  <h2 className="text-xl font-semibold text-center mt-4">
+                                  <h2 className="text-xl font-semiBold text-center mt-4">
                                       {product.product_name}
                                   </h2>
                                   <div className="flex justify-between items-center mt-2 flex-grow">
-                                      <div className="text-sm text-gray-600 overflow-hidden max-w-[70%] whitespace-nowrap text-ellipsis">
+                                      <div className="text-sm font-regular text-gray-600 overflow-hidden max-w-[70%] whitespace-nowrap text-ellipsis">
                                           {product.description}
                                       </div>
-                                      <div className="text-xl font-semibold text-black ml-4">
+                                      <div className="text-xl font-semiBold text-black ml-4">
                                           {product.price !== null
                                               ? `${product.price} руб.`
-                                              : "Contact for price"}
+                                              : "Цена не указана"}
                                       </div>
                                   </div>
                               </div>
@@ -70,14 +70,14 @@ export default function BottomSwiper({ products }: { products: Product[] }) {
                   ))
               ) : (
                   <SwiperSlide>
-                      <p className="text-center">Нет товаров для отображения.</p>
+                      <p className="text-center font-regular">Нет товаров для отображения.</p>
                   </SwiperSlide>
               )}
           </Swiper>
 
           <div className="flex justify-center">
               <NextLink href="/catalog">
-                  <button className="bg-orange-500 hover:bg-orange-600 text-white text-lg font-semibold px-6 py-3 rounded-full transition">
+                  <button className="bg-orange-500 hover:bg-orange-600 text-white text-xl font-semiBold px-6 py-3 rounded-full transition">
                       Перейти в каталог
                   </button>
               </NextLink>

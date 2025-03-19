@@ -8,12 +8,18 @@ export default {
   ],
   theme: {
     extend: {
+      backgroundImage: {
+        'underline-gradient': 'linear-gradient(to right, #ff6800, #FCCA27)',
+      },
       fontFamily: {
         sans: ["var(--font-oswald)"],
         light: ["var(--font-oswald-wght)"],
         regular: ["Oswald", "regular"],
         semiBold: ["Oswald", "semiBold"],
         bold: ["Oswald", "bold"],
+      },
+      fontSize: {
+        "2.5xl": "1.6875rem",
       },
       colors: {
         background: "var(--background)",
@@ -34,5 +40,24 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    function ({ addUtilities }) {
+      const newUtilities = {
+        '.underline-gradient': {
+          position: 'relative',
+          textDecoration: 'none',
+        },
+        '.underline-gradient::after': {
+          content: '""',
+          position: 'absolute',
+          left: '0',
+          bottom: '-2px',
+          width: '100%',
+          height: '2px',
+          backgroundImage: 'var(--tw-gradient-underline)',
+        },
+      };
+      addUtilities(newUtilities, ['responsive', 'hover']);
+    },
+  ],
 } satisfies Config;

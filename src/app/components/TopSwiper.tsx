@@ -52,11 +52,11 @@ export default function TopSwiper({ initialImages }: TopSwiperProps) {
       <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
         Строительные материалы
       </h1>
-      <p className="text-lg sm:text-xl md:text-2xl text-white mb-4">
+      <p className="text-lg font-regular sm:text-xl md:text-2xl text-white mb-4">
         Строительные материалы на <span className="font-bold">X%</span>{" "}
         дешевле, чем на рынке
       </p>
-      <button className="bg-white text-[#330100] py-2 px-6 rounded-full font-semibold hover:bg-opacity-90 transition">
+      <button className="bg-white text-[#330100] py-2 px-6 rounded-full text-xl font-semiBold hover:bg-opacity-90 transition">
         Оставить заявку
       </button>
     </div>

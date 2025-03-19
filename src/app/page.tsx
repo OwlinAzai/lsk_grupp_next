@@ -33,6 +33,7 @@ export default async function HomeServer() {
       <HomeClient
         products={detailedProducts}
         homeInfo={homeInfo?.text || null}
+        homeAdvantage={homeInfo?.advantages || null}
       />
     );
   } catch (error) {
